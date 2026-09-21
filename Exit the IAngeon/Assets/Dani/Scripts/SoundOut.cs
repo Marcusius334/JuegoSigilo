@@ -16,11 +16,12 @@ public class SoundOut : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // el sonido que detecta el jugador
+            // lo que escuha el jug
             audioSource.Play();
 
-            // Ruido que detectan los enemigos
+            // Escuchan los enemigos
             NoiseManager.MakeNoise(transform.position, noiseRadius);
+            Debug.Log("Sonido.MP5");
         }
     }
 }
