@@ -8,6 +8,7 @@ public class Goblin : MonoBehaviour
     }
 
     private Estado estadoActual;
+    private Vector3 lastPosition;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,9 +22,10 @@ public class Goblin : MonoBehaviour
         
     }
 
-    public void FollowMode()
+    public void FollowMode(Vector3 pos)
     {
         estadoActual = Estado.Persiguiendo;
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
+        lastPosition = pos;
     }
 }

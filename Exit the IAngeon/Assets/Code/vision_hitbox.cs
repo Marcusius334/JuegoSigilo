@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using UnityEngine;
 
 public class vision_hitbox : MonoBehaviour
@@ -25,7 +24,7 @@ public class vision_hitbox : MonoBehaviour
         if (hit.collider == null)
         {
             Debug.Log("No hay ningún muro. ¡Jugador detectado!");
-            goblin.FollowMode();
+            goblin.FollowMode(transform.position);
         }
         else
         {
