@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Victory.unity
     guid: 40c3f72e329a7e24bb2b595ee39ac1ef
+  - enabled: 1
+    path: Assets/Scenes/More Mapa.unity
+    guid: 5017ba543720bdc40bf52f9df68e64de
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
