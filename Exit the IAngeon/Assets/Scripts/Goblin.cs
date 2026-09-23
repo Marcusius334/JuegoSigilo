@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class Goblin : MonoBehaviour
 {
-    public enum Estado{
+    public enum Estado
+    {
         Buscando,
         Persiguiendo
     }
@@ -10,20 +11,24 @@ public class Goblin : MonoBehaviour
     private Estado estadoActual;
     private Vector3 lastPosition;
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //Empieza en busqueda:
         estadoActual = Estado.Buscando;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (estadoActual == Estado.Buscando)
+        {
+            //Movimiento con Wander:
+            
+        }   
     }
 
     public void FollowMode(Vector3 pos)
     {
+        //Entra en modo persecución al encontrar un enemigo y almacena su posición:
         estadoActual = Estado.Persiguiendo;
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
         lastPosition = pos;
