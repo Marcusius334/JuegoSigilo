@@ -5,6 +5,7 @@ public class vision_hitbox : MonoBehaviour
     [SerializeField] private LayerMask capaMuros;
 
     public Goblin goblin;
+    public Skeleton skeleton;
     
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -24,11 +25,27 @@ public class vision_hitbox : MonoBehaviour
         if (hit.collider == null)
         {
             Debug.Log("No hay ningún muro. ¡Jugador detectado!");
-            goblin.FollowMode(other.transform);
+            if (goblin != null) goblin.FollowMode(other.transform);
+            else skeleton.FollowMode(other.transform);
         }
         else
         {
             Debug.Log("Hay un muro entre el goblin y el jugador.");
+        }
+    }
+
+    private void OnTriggerStay2D (Collider2D other)
+    {
+        if (goblin != null) return;
+        
+        //Para comprobar si dentro de la vision hay algun esqueleto en persecución o justo cambia:
+        if (other.TryGetComponent<Skeleton>(out Skeleton otroEnemigo))
+        {   
+            //Descartamos que pueda ser el mismo:
+            if (otroEnemigo == skeleton) return;
+
+            //Comprobamos su estado:
+            if (otroEnemigo.EstaPersiguiendo()) skeleton.FollowMode(otroEnemigo.jugador);
         }
     }
 
