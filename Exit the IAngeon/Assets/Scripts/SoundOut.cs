@@ -24,4 +24,10 @@ public class SoundOut : MonoBehaviour
             Debug.Log("Sonido.MP5");
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, noiseRadius);
+    }
 }

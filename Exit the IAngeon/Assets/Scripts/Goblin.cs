@@ -1,10 +1,12 @@
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Goblin : MonoBehaviour
+public class Goblin : MonoBehaviour, IHearing
 {
     public enum Estado{
+        Patrullando,
         Buscando,
+        SeguirSonido,
         Persiguiendo
     }
 
@@ -14,6 +16,7 @@ public class Goblin : MonoBehaviour
     private Vector3 velocity;
     private Vector3 acceleration;
     private Transform jugador;
+    private AudioSource audioSource;
 
     private float tiempoSinVerJugador = 0f;
     
@@ -21,14 +24,15 @@ public class Goblin : MonoBehaviour
     public float maxSpeed = 5f;
     public float maxForce = 0.2f;
     public float tiempoDePersecucion = 8f;
+    public float noiseRadius = 5f;
 
 
     void Start()
     {
-        estadoActual = Estado.Buscando;
+        estadoActual = Estado.Patrullando;
         velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
         acceleration = Vector3.zero; //this.acceleration = createVector(0, 0);
-
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -53,10 +57,10 @@ public class Goblin : MonoBehaviour
             {
                 estadoActual = Estado.Buscando;
                 Debug.Log("Mucho tiempo sin ver al jugador, Estado: BUSCANDO");
-                velocity = Vector3.zero;
+                velocity = Vector3.zero;//Pasan cosas de buscar
             }
         }
-        Debug.Log("Velocity: " + velocity);
+        //Debug.Log("Velocity: " + velocity);
 
     }
     void applyForce(Vector3 force)
@@ -86,11 +90,50 @@ public class Goblin : MonoBehaviour
 
     public void FollowMode(Transform objetivo)
     {
+        Scream();
         estadoActual = Estado.Persiguiendo;
         jugador = objetivo;
 
         tiempoSinVerJugador = 0;
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
         //lastPosition = pos;
+    }
+
+    //Es lo mismo que FollowMode pero adaptado a escuchar el sonido
+    //Se podría cambiar para usar A* tal vez
+    public void FollowSound(Vector2 objetivo)
+    {
+        estadoActual = Estado.Persiguiendo;//el estado debería ser seguir sonido, pero como no hay nada de eso, pongo perseguir para que pase algo
+        //Vector2 sonido = objetivo; //^^Same^^^^^^
+        //Todo lo de abajo es simplemente para probar que funciona, cuando lo del sonido se cambia
+        GameObject player = new GameObject("PosicionRuido");
+        player.transform.position = objetivo;
+        jugador = player.transform;
+
+        //Lo mismo que con lo de arriba de perseguir, cuando sepamos más sobre lo del sonido lo cambiamos
+        tiempoSinVerJugador = 0;
+        Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
+        //lastPosition = pos;
+    }
+
+    //Esta función pretende alertar a los goblins cercanos en un radio marcado en el inspector
+    public void Scream()
+    {
+        audioSource.Play();
+        NoiseManager.MakeNoise(transform.position, noiseRadius);
+        Debug.Log("Sonido.MP5");
+    }
+
+    //Escuchar el sonido
+    public void SetNoisePosition(Vector2 noisePosition)
+    {
+        FollowSound(noisePosition);
+    }
+
+    //para dibujar el radio del grito en el editorx
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, noiseRadius);
     }
 }
