@@ -12,6 +12,10 @@ public class Goblin : MonoBehaviour, IHearing
 
     private Estado estadoActual;
     private Vector3 lastPosition;
+    private SpriteRenderer sprite;
+    public Transform conoVision;
+  
+
 
     private Vector3 velocity;
     private Vector3 acceleration;
@@ -26,6 +30,8 @@ public class Goblin : MonoBehaviour, IHearing
     public float tiempoDePersecucion = 8f;
     public float noiseRadius = 5f;
 
+    
+
 
     void Start()
     {
@@ -33,6 +39,8 @@ public class Goblin : MonoBehaviour, IHearing
         velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
         acceleration = Vector3.zero; //this.acceleration = createVector(0, 0);
         audioSource = GetComponent<AudioSource>();
+
+        sprite = GetComponentInChildren<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -40,6 +48,9 @@ public class Goblin : MonoBehaviour, IHearing
     {
         if (estadoActual == Estado.Persiguiendo) 
         {
+     
+
+
             Seek(jugador.position);
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
@@ -61,8 +72,27 @@ public class Goblin : MonoBehaviour, IHearing
             }
         }
         //Debug.Log("Velocity: " + velocity);
+        if (jugador != null && sprite != null)
+        {
+            if (jugador.position.x < transform.position.x)
+            {
+                sprite.flipX = true;
+                conoVision.localScale = new Vector3(-1, conoVision.localScale.y, 1);
+            }
+            else
+            {
+                sprite.flipX = false;
+                conoVision.localScale = new Vector3(1, conoVision.localScale.y, 1);
+            }
+        }
+
+
 
     }
+
+    //===============================
+    //SEEK
+    //===============================
     void applyForce(Vector3 force)
     {
         acceleration += force; // this.acceleration.add(force);
@@ -86,8 +116,12 @@ public class Goblin : MonoBehaviour, IHearing
         //aplicar fuerza -> this.applyForce(steer);
         applyForce(steer);
     }
- 
 
+
+
+    //===============================
+    //DETECTAR PLAYER 
+    //===============================
     public void FollowMode(Transform objetivo)
     {
         Scream();
@@ -130,6 +164,10 @@ public class Goblin : MonoBehaviour, IHearing
         FollowSound(noisePosition);
     }
 
+
+    //===============================
+    //DIBUJAR EL AREA DE DETECCION DEL GOBLIN
+    //===============================
     //para dibujar el radio del grito en el editorx
     private void OnDrawGizmos()
     {
