@@ -8,20 +8,11 @@ public static class NoiseManager
 
         foreach (Collider2D enemy in enemies)
         {
-            object hearing;
-
-            if(enemy.name == "Goblin_1" || enemy.name == "Goblin_2" || enemy.name == "Goblin_3")
-            {
-                hearing = enemy.GetComponent<Goblin>();
-            }
-            else
-            {
-                hearing = enemy.GetComponent<EnemyHearing>();
-            }
+            EnemyHearing hearing = enemy.GetComponent<EnemyHearing>();
 
             if (hearing != null)
             {
-                //hearing.HearNoise(position);
+                hearing.HearNoise(position);
             }
         }
     }
