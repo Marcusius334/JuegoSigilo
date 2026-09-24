@@ -27,6 +27,7 @@ public class SoundOut : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, noiseRadius);
     }
 }

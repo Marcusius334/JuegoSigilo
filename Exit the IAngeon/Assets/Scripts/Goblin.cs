@@ -1,7 +1,7 @@
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Goblin : MonoBehaviour
+public class Goblin : MonoBehaviour, IHearing
 {
     public enum Estado{
         Patrullando,
@@ -60,7 +60,7 @@ public class Goblin : MonoBehaviour
                 velocity = Vector3.zero;//Pasan cosas de buscar
             }
         }
-        Debug.Log("Velocity: " + velocity);
+        //Debug.Log("Velocity: " + velocity);
 
     }
     void applyForce(Vector3 force)
@@ -125,19 +125,15 @@ public class Goblin : MonoBehaviour
     }
 
     //Escuchar el sonido
-    public void HearNoise(Vector2 noisePosition)
+    public void SetNoisePosition(Vector2 noisePosition)
     {
-        Debug.Log("¡He escuchado un ruido!");
-
-        // De momento, simplemente nos movemos hacia el ruido
-        Debug.Log("Ruido en: " + noisePosition);
-
         FollowSound(noisePosition);
     }
 
-    //para dibujar el radio del grito en el editor
+    //para dibujar el radio del grito en el editorx
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, noiseRadius);
     }
 }
