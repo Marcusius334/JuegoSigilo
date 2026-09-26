@@ -9,17 +9,15 @@ public class slimeIA : MonoBehaviour
     }
 
     public SpriteRenderer sprite;
-    private Estado estadoActual;
+    public Estado estadoActual;
 
-    //Wander
     private Vector2 wanderTarget;
-    private Vector2 moveDirection; // Dirección actual estandarizada
+    private Vector2 moveDirection;
 
-    //Seek
     private Vector3 velocity;
     private Vector3 acceleration;
     private Transform jugador;
-    private float tiempoSinVerJugador;
+    public float tiempoSinVerJugador;
 
 
 
@@ -62,10 +60,7 @@ public class slimeIA : MonoBehaviour
 
     void Update()
     {
-        if (jugador != null) 
-        {
-            DetectarPLayer();
-        }
+        
 
         if (estadoActual == Estado.Buscando)
         {
@@ -149,16 +144,6 @@ public class slimeIA : MonoBehaviour
     //===============================
     //DETECTAR PLAYER (provisional) Esta funcion se tiene que cambiar para que, en lugar de chocar con los slimes, que detecten las vibraciones
     //===============================
-    private void DetectarPLayer()
-    {
-        float distancia = Vector3.Distance(transform.position, jugador.position);
-        if (distancia <= radioDeteccion) 
-        {
-            estadoActual = Estado.Persiguiendo;
-            tiempoSinVerJugador = 0f;
-        }
-
-    }
 
 
 

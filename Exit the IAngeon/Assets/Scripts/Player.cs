@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     private Vector2 movement;
     private SpriteRenderer spriteRenderer;
     public SceneLoader sceneLoader;
+    public bool IsMoving => movement.magnitude > 0.1f;
 
     void Start()
     {

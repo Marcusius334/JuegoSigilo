@@ -8,15 +8,11 @@ public static class NoiseManager
 
         foreach (Collider2D enemy in enemies)
         {
-            //Para comprovar que solo se detectan las colisiones de los enemies
-            //y no sus conos de visión o similares
-            if (!enemy.CompareTag("Enemy"))
-                continue;
-
             EnemyHearing hearing = enemy.GetComponentInParent<EnemyHearing>();
 
             if (hearing != null)
             {
+                Debug.Log("He escuchado");
                 hearing.HearNoise(position);
             }
         }
