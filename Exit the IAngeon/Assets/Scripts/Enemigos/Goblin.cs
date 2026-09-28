@@ -12,19 +12,16 @@ public class Goblin : MonoBehaviour, IHearing
 
     private Estado estadoActual;
     private Vector3 lastPosition;
-    public float velocidadRotacion = 15f;
     private SpriteRenderer sprite;
     private Vector3 rotacionVision;
-    public Transform conoVision;
-  
-
-
     private Vector3 velocity;
     private Vector3 acceleration;
     private Transform jugador;
     private AudioSource audioSource;
-
     private float tiempoSinVerJugador = 0f;
+
+    public Transform conoVision;
+    public float velocidadRotacion = 15f;
     
     [Header("Seek")]
     public float maxSpeed = 5f;
