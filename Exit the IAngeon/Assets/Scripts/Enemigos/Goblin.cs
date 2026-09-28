@@ -12,7 +12,9 @@ public class Goblin : MonoBehaviour, IHearing
 
     private Estado estadoActual;
     private Vector3 lastPosition;
+    public float velocidadRotacion = 15f;
     private SpriteRenderer sprite;
+    private Vector3 rotacionVision;
     public Transform conoVision;
   
 
@@ -59,6 +61,24 @@ public class Goblin : MonoBehaviour, IHearing
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             //mover el goblin -> this.position.add(this.velocity);
             transform.position += velocity * Time.deltaTime;
+            //rotar cono de vision según el movimiento:
+            rotacionVision = velocity.normalized;
+            if (rotacionVision != Vector3.zero)
+            {
+                //Se calcula el angulo:
+                float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
+                float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
+
+                //Crea la rotación en Z:
+                Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
+
+                //Aplica la rotación:
+                conoVision.rotation = Quaternion.Slerp(
+                    conoVision.rotation, 
+                    rotacionObjetivo, 
+                    velocidadRotacion * Time.deltaTime
+                );
+            }
             //resetear la aceleracion -> this.acceleration.mult(0);
             acceleration = Vector3.zero;
 
@@ -72,7 +92,7 @@ public class Goblin : MonoBehaviour, IHearing
             }
         }
         //Debug.Log("Velocity: " + velocity);
-        if (jugador != null && sprite != null)
+        /* if (jugador != null && sprite != null)
         {
             if (jugador.position.x < transform.position.x)
             {
@@ -84,7 +104,7 @@ public class Goblin : MonoBehaviour, IHearing
                 sprite.flipX = false;
                 conoVision.localScale = new Vector3(1, conoVision.localScale.y, 1);
             }
-        }
+        } */
 
 
 
