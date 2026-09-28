@@ -50,6 +50,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Skeleton
   estadoActual: 0
   jugador: {fileID: 0}
+  conoVision: {fileID: 2323088766979130444}
+  velocidadRotacion: 15
   maxSpeed: 5
   maxForce: 0.2
 --- !u!61 &8082351832276095782

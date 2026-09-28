@@ -8,12 +8,14 @@ public class Skeleton : MonoBehaviour
         Persiguiendo
     }
 
-    public Estado estadoActual;
-    //public Vector3 lastPosition;
-
     private Vector3 velocity;
     private Vector3 acceleration;
+    private Vector3 rotacionVision;
+
+    public Estado estadoActual;
     public Transform jugador;
+    public Transform conoVision;
+    public float velocidadRotacion = 15f;
     
     [Header("Seek")]
     public float maxSpeed = 5f;
@@ -27,7 +29,6 @@ public class Skeleton : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (estadoActual == Estado.Persiguiendo) 
@@ -40,6 +41,24 @@ public class Skeleton : MonoBehaviour
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
             //mover el goblin -> this.position.add(this.velocity);
             transform.position += velocity * Time.deltaTime;
+            //rotar cono de vision según el movimiento:
+            rotacionVision = velocity.normalized;
+            if (rotacionVision != Vector3.zero)
+            {
+                //Se calcula el angulo:
+                float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
+                float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
+
+                //Crea la rotación en Z:
+                Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
+
+                //Aplica la rotación:
+                conoVision.rotation = Quaternion.Slerp(
+                    conoVision.rotation, 
+                    rotacionObjetivo, 
+                    velocidadRotacion * Time.deltaTime
+                );
+            }
             //resetear la aceleracion -> this.acceleration.mult(0);
             acceleration = Vector3.zero;
         }

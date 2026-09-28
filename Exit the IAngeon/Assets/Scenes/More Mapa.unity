@@ -624,6 +624,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 589681461}
     m_Modifications:
+    - target: {fileID: 1786635304939014477, guid: 400a2d31f3d58bc4c8eb58dcfe43e3c4, type: 3}
+      propertyPath: maxSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1786635304939014477, guid: 400a2d31f3d58bc4c8eb58dcfe43e3c4, type: 3}
+      propertyPath: conoVision
+      value: 
+      objectReference: {fileID: 721871100}
     - target: {fileID: 3971940884628933515, guid: 400a2d31f3d58bc4c8eb58dcfe43e3c4, type: 3}
       propertyPath: m_Name
       value: Esqueleto_2
@@ -778,6 +786,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4836945024597213977, guid: f80146b2560f58541b42ead758348d2f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4836945024597213977, guid: f80146b2560f58541b42ead758348d2f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.58
+      objectReference: {fileID: 0}
+    - target: {fileID: 8503653002821607166, guid: f80146b2560f58541b42ead758348d2f, type: 3}
+      propertyPath: maxSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8503653002821607166, guid: f80146b2560f58541b42ead758348d2f, type: 3}
+      propertyPath: conoVision
+      value: 
+      objectReference: {fileID: 952189337}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8219,6 +8243,11 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!4 &721871100 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3270774051011810, guid: 400a2d31f3d58bc4c8eb58dcfe43e3c4, type: 3}
+  m_PrefabInstance: {fileID: 259233852}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &760508214
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8249,11 +8278,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5936703597216219748, guid: 958bbbc774b50b94aabe71d0432bc996, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.81
+      value: 1.38
       objectReference: {fileID: 0}
     - target: {fileID: 5936703597216219748, guid: 958bbbc774b50b94aabe71d0432bc996, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.37
+      value: 6.39
       objectReference: {fileID: 0}
     - target: {fileID: 5936703597216219748, guid: 958bbbc774b50b94aabe71d0432bc996, type: 3}
       propertyPath: m_LocalPosition.z
@@ -16977,6 +17006,11 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!4 &952189337 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7981489881364900689, guid: f80146b2560f58541b42ead758348d2f, type: 3}
+  m_PrefabInstance: {fileID: 380618250}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1031822305
 GameObject:
   m_ObjectHideFlags: 0
