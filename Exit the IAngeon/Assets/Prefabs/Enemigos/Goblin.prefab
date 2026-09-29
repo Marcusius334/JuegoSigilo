@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7853422759853282839}
   - component: {fileID: 6667723110649839807}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 735839579315345620}
   - component: {fileID: 52591798521386637}
   - component: {fileID: 2010702410293051545}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Goblin
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -141,12 +141,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 663c2ddd1da97bb47ae7bd3cae8de43b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Goblin
-  velocidadRotacion: 15
+  velocity: {x: 0, y: 0, z: 0}
   conoVision: {fileID: 1165183468609665712}
+  velocidadRotacion: 15
   maxSpeed: 5
   maxForce: 0.2
   tiempoDePersecucion: 8
   noiseRadius: 5
+  perceptionRadius: 30
+  separationRadius: 0.6
+  GoblinLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  separationWeight: 1.5
+  alignmentWeight: 5
+  cohesionWeight: 5
+  wanderWeight: 0.5
 --- !u!82 &4494009815528450329
 AudioSource:
   m_ObjectHideFlags: 0
@@ -381,9 +391,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3030889220705933378, guid: f2aded04dafb59a489c061cbb9367da1, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6197515766375339233, guid: f2aded04dafb59a489c061cbb9367da1, type: 3}
       propertyPath: m_Name
       value: Vision
+      objectReference: {fileID: 0}
+    - target: {fileID: 6197515766375339233, guid: f2aded04dafb59a489c061cbb9367da1, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6214702304688217219, guid: f2aded04dafb59a489c061cbb9367da1, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

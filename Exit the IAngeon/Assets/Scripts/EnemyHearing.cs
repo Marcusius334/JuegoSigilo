@@ -10,7 +10,7 @@ public class EnemyHearing : MonoBehaviour
         Debug.Log("cosa de codigo");
     }
 
-    public void HearNoise(Vector2 noisePosition)
+    public void HearNoise(Transform noisePosition)
     {
         Debug.Log("¡He escuchado un ruido!");
 

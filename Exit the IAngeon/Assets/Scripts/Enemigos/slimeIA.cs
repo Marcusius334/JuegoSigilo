@@ -163,7 +163,7 @@ public class slimeIA : MonoBehaviour
 
 
     //===============================
-    //SEEK
+    //WANDER
     //===============================
     void CheckWallCollision()
     {
