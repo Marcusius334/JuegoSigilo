@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     public float runSpeed = 10f;
 
     public bool hasKey = false;
+    public bool isRunning;
 
     private Vector2 movement;
     private SpriteRenderer spriteRenderer;
@@ -33,7 +34,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        bool isRunning = Keyboard.current.leftShiftKey.isPressed;
+        isRunning = Keyboard.current.leftShiftKey.isPressed;
 
         float currentSpeed = isRunning ? runSpeed : speed;
 
