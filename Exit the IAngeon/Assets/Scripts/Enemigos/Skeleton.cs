@@ -11,6 +11,12 @@ public class Skeleton : MonoBehaviour
     private Vector3 velocity;
     private Vector3 acceleration;
     private Vector3 rotacionVision;
+    private Vector3 positionAnteriorPlayer;
+    private bool firstPursue;
+    private GameObject player;
+    private Player playerScr;
+    private float playerSpeed;
+    private float playerRunSpeed;
 
     public Estado estadoActual;
     public Transform jugador;
@@ -26,14 +32,20 @@ public class Skeleton : MonoBehaviour
         estadoActual = Estado.Buscando;
         velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
         acceleration = Vector3.zero; //this.acceleration = createVector(0, 0);
-
+        //Preparación para el pursue
+        firstPursue = true;
+        player = GameObject.FindWithTag("Player");
+        playerScr = player.GetComponent<Player>();
+        playerSpeed = playerScr.speed;
+        playerRunSpeed = playerScr.runSpeed;
+        //Fin de preparación del pursue
     }
 
     void Update()
     {
         if (estadoActual == Estado.Persiguiendo) 
         {
-            Seek(jugador.position);
+            Pursue(jugador.position);
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
             velocity += acceleration; 
@@ -62,6 +74,11 @@ public class Skeleton : MonoBehaviour
             //resetear la aceleracion -> this.acceleration.mult(0);
             acceleration = Vector3.zero;
         }
+        else
+        {
+            //Al tener otro estado, prepara el pursue para que el if funcione
+            firstPursue = true;
+        }
         //Debug.Log("Velocity: " + velocity);
 
     }
@@ -69,6 +86,42 @@ public class Skeleton : MonoBehaviour
     {
         acceleration += force; // this.acceleration.add(force);
     }
+
+    //Hace los cálculos del pursue y con eso hace un Seek
+    void Pursue(Vector3 target)
+    {
+        //Si es la primera vez que se hace pursue se mueve hacia la posición actual del jugador porque todavía no ha podido obtener una posición anterior
+        if (firstPursue)
+        {
+            firstPursue = false;
+            Seek(target);
+        }
+        else
+        {
+            //Calculamos la dirección hacia la que se mueve el jugador
+            Vector3 newDir = target - positionAnteriorPlayer;
+
+            //Calculamos la dirección del esqueleto al jugador y lo multiplicamos por la diferencia entre las velocidades del jugador y el esqueleto
+            float speedRatio;
+            if (playerScr.isRunning)
+            {
+                speedRatio = playerRunSpeed/maxSpeed;
+            }
+            else
+            {
+                speedRatio = playerSpeed/maxSpeed;
+            }
+            Vector3 distEnmyPly = (transform.position - player.transform.position) * speedRatio;
+
+            //Alineamos distEnmyPly con el vector newDir y obtenemos el punto final, con el que hacemos seek
+            Vector3 finalVector = newDir.normalized * distEnmyPly.magnitude;
+            Vector3 positionPursue = finalVector + target;
+            Seek(positionPursue);
+        }
+
+        positionAnteriorPlayer = target;
+    }
+
     void Seek(Vector3 target)
     {
         //direccion desde el Goblin hacia el objetivo -> let desired = p5.Vector.sub(target, this.position);
