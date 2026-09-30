@@ -21,7 +21,7 @@ public class EnemyHearing : MonoBehaviour
             Debug.Log("SLIMEIA ENCONTRADO");
     }
 
-    public void HearNoise(Vector2 noisePosition, bool isRunning)
+    public void HearNoise(Transform noisePosition, bool isRunning)
     {
         // Si está andando y este enemigo no puede escuchar pasos normales, ignoramos el ruido
         if (!isRunning && !hearsWalking)

@@ -103,7 +103,7 @@ public class Skeleton : MonoBehaviour
 
             //Calculamos la dirección del esqueleto al jugador y lo multiplicamos por la diferencia entre las velocidades del jugador y el esqueleto
             float speedRatio;
-            if (playerScr.isRunning)
+            if (playerScr.IsRunning)
             {
                 speedRatio = playerRunSpeed/maxSpeed;
             }

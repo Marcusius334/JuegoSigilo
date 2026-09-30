@@ -46,11 +46,7 @@ public class SonidoJUgador : MonoBehaviour
         Debug.Log("RUIDO DEL JUGADOR - Corriendo: " + player.IsRunning +
                   " - Radio: " + noiseRadius);
 
-        NoiseManager.MakeNoise(
-            transform.position,
-            noiseRadius,
-            player.IsRunning
-        );
+        NoiseManager.MakeNoise(transform,noiseRadius,player.IsRunning);
     }
 
     private void OnDrawGizmos()
