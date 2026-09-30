@@ -2,22 +2,24 @@ using UnityEngine;
 
 public static class NoiseManager
 {
-    public static void MakeNoise(Transform position, float radius)
+    // Para que los enemigos que no escuchan al andar funcionen bn (para que no haya conflictos en otros enemigos mientras se trabajaba)
+    public static void MakeNoise(Vector2 position, float radius)
     {
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(position.position, radius);
+        MakeNoise(position, radius, true);
+    }
+
+    // Para los sonidos del jugador
+    public static void MakeNoise(Vector2 position, float radius, bool isRunning)
+    {
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(position, radius);
 
         foreach (Collider2D enemy in enemies)
         {
-            //Para comprovar que solo se detectan las colisiones de los enemies
-            //y no sus conos de visión o similares
-            if (!enemy.CompareTag("Enemy"))
-                continue;
-
             EnemyHearing hearing = enemy.GetComponentInParent<EnemyHearing>();
 
             if (hearing != null)
             {
-                hearing.HearNoise(position);
+                hearing.HearNoise(position, isRunning);
             }
         }
     }
