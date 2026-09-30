@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class NoiseManager
 {
-    // Para que los enemigos que no escuchan al andar funcionen bn (para que no haya conflictos en otros enemigos mientras se trabajaba)
+    // Para los sonidos que ya existían
     public static void MakeNoise(Vector2 position, float radius)
     {
         MakeNoise(position, radius, true);
