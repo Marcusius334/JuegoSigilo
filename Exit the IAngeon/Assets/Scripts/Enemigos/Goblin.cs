@@ -20,6 +20,7 @@ public class Goblin : MonoBehaviour, IHearing
     private Transform jugador;
     private AudioSource audioSource;
     private float tiempoSinVerJugador = 0f;
+    private int avoidanceSide;
 
     public Transform conoVision;
     public float velocidadRotacion = 15f;
@@ -43,6 +44,10 @@ public class Goblin : MonoBehaviour, IHearing
     public float alignmentWeight = 1.0f;
     public float cohesionWeight = 1.0f;
     public float wanderWeight = 0.5f;
+
+    public LayerMask obstacleLayer;
+    public float obstacleDistance = 3f;
+    public float emergencyDistance = 0.5f;
     
 
 
@@ -52,6 +57,7 @@ public class Goblin : MonoBehaviour, IHearing
         //velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
         acceleration = Vector3.zero; //this.acceleration = createVector(0, 0);
         audioSource = GetComponent<AudioSource>();
+        avoidanceSide = 0;//Cosa de obstacle
 
         sprite = GetComponentInChildren<SpriteRenderer>();
 
@@ -75,6 +81,7 @@ public class Goblin : MonoBehaviour, IHearing
             //CALCULAR EL SEEK:
             
             Seek(jugador.position);
+            ObstacleAvoidance();
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
             velocity += acceleration; 
@@ -206,6 +213,126 @@ public class Goblin : MonoBehaviour, IHearing
                 rotacionObjetivo, 
                 velocidadRotacion * Time.deltaTime
             );
+        }
+    }
+
+    void ObstacleAvoidance()
+    {
+        //Si está parado no hace falta buscar obstáculos
+        if (velocity.magnitude < 0.01f){
+            return;
+        }
+
+        // Tres rayos: centro, izquierda y derecha
+        Vector2 direction = velocity.normalized;
+        Vector2 leftDir = Quaternion.Euler(0, 0, 30) * direction;
+        Vector2 rightDir = Quaternion.Euler(0, 0, -30) * direction;
+
+        float sideDistance = obstacleDistance * 0.6f;
+
+        // Dibujar rayos
+        Debug.DrawRay(transform.position, direction * obstacleDistance, Color.red);
+        Debug.DrawRay(transform.position, leftDir * sideDistance, Color.yellow);
+        Debug.DrawRay(transform.position, rightDir * sideDistance, Color.yellow);
+
+        RaycastHit2D hitCenter = Physics2D.Raycast( //Crea un rayo que va
+            transform.position,                     //desde una posición
+            direction,                              //con una dirección
+            obstacleDistance,                       //una distáncia máxima
+            obstacleLayer                           //y detecta esta layer
+        ); 
+
+        RaycastHit2D hitLeft = Physics2D.Raycast(
+            transform.position,
+            leftDir,
+            sideDistance,
+            obstacleLayer
+        );
+
+        RaycastHit2D hitRight = Physics2D.Raycast(
+            transform.position,
+            rightDir,
+            sideDistance,
+            obstacleLayer
+        );
+
+        Vector2 avoidance = Vector2.zero;
+
+        // Obstáculo de frente
+        if (hitCenter.collider != null)
+        {
+            //rozando la pared se sale de todo con 180
+            if (hitCenter.distance < emergencyDistance)
+            {
+                Vector2 oppositeDirection = -direction;
+
+                Vector3 desired = oppositeDirection * maxSpeed;
+                Vector3 steer = desired - velocity;
+
+                steer = Vector3.ClampMagnitude(
+                    steer,
+                    maxForce * 3f
+                );
+
+                applyForce(steer);
+
+                return;
+            }
+
+            //Se busca si los lados están libres para que la nueva posición no sea recto (porque se chocaría con pared)
+            //para que no se siga llendo recto y pasen cosas malas
+            float leftDistance = hitLeft.collider != null ? hitLeft.distance : Mathf.Infinity;
+            float rightDistance = hitRight.collider != null ? hitRight.distance : Mathf.Infinity;
+            
+            // Solo elegimos el lado si todavía no tenemos uno elegido
+            //Cosa para que no se quede stuck
+            if (avoidanceSide == 0)
+            {
+                if (leftDistance > rightDistance)
+                {
+                    avoidanceSide = -1;
+                }
+                else
+                {
+                    avoidanceSide = 1;
+                }
+            }
+
+            //nuevo target
+            avoidance += hitCenter.normal;
+            if (avoidanceSide == -1)
+            {
+                avoidance += leftDir;
+            }
+            else
+            {
+                avoidance += rightDir;
+            }
+        }
+
+        // Obstáculo a la izquierda
+        if (hitLeft.collider != null)
+        {
+            avoidance += rightDir;
+        }
+
+        // Obstáculo a la derecha
+        if (hitRight.collider != null)
+        {
+            avoidance += leftDir;
+        }
+
+        //Esto genera la nueva dirección deseada y se aplica fuerza en consecuencia a lo Steer
+        if (avoidance != Vector2.zero)
+        {
+            avoidance.Normalize();
+
+            Vector3 desired = avoidance * maxSpeed;
+            Vector3 steer = desired - velocity;
+
+            steer = Vector3.ClampMagnitude(steer, maxForce * 2f);
+
+            applyForce(steer);
         }
     }
 

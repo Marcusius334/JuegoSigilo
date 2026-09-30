@@ -157,6 +157,11 @@ MonoBehaviour:
   alignmentWeight: 5
   cohesionWeight: 5
   wanderWeight: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  obstacleDistance: 3
+  emergencyDistance: 0.5
 --- !u!82 &4494009815528450329
 AudioSource:
   m_ObjectHideFlags: 0
