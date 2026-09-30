@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SonidoJUgador : MonoBehaviour
 {
-    
-    [SerializeField] private float noiseRadius = 5f;
+    [SerializeField] private float walkNoiseRadius = 2f;
+    [SerializeField] private float runNoiseRadius = 5f;
     [SerializeField] private float stepInterval = 0.4f;
 
     private AudioSource audioSource;
@@ -37,14 +37,25 @@ public class SonidoJUgador : MonoBehaviour
 
     private void HacerRuido()
     {
-        // Sonido que escucha el jugador
         audioSource.Play();
 
-        NoiseManager.MakeNoise(transform.position, noiseRadius);
+        float noiseRadius = player.IsRunning
+            ? runNoiseRadius
+            : walkNoiseRadius;
+
+        Debug.Log("RUIDO DEL JUGADOR - Corriendo: " + player.IsRunning +
+                  " - Radio: " + noiseRadius);
+
+        NoiseManager.MakeNoise(
+            transform.position,
+            noiseRadius,
+            player.IsRunning
+        );
     }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, noiseRadius);
+        Gizmos.DrawWireSphere(transform.position, runNoiseRadius);
     }
 }

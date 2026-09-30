@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class EnemyHearing : MonoBehaviour
 {
+    [SerializeField] private bool hearsWalking = false;
+
     private IHearing hearingScript;
     private slimeIA slimeia;
 
@@ -19,8 +21,12 @@ public class EnemyHearing : MonoBehaviour
             Debug.Log("SLIMEIA ENCONTRADO");
     }
 
-    public void HearNoise(Vector2 noisePosition)
+    public void HearNoise(Vector2 noisePosition, bool isRunning)
     {
+        // Si está andando y este enemigo no puede escuchar pasos normales, ignoramos el ruido
+        if (!isRunning && !hearsWalking)
+            return;
+
         Debug.Log("¡He escuchado un ruido!");
         Debug.Log("Ruido en: " + noisePosition);
 
@@ -32,6 +38,9 @@ public class EnemyHearing : MonoBehaviour
             Debug.Log("Slime → PERSIGUIENDO");
         }
 
-        hearingScript.SetNoisePosition(noisePosition);
+        if (hearingScript != null)
+        {
+            hearingScript.SetNoisePosition(noisePosition);
+        }
     }
 }

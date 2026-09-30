@@ -11,7 +11,9 @@ public class Player : MonoBehaviour
     private Vector2 movement;
     private SpriteRenderer spriteRenderer;
     public SceneLoader sceneLoader;
+
     public bool IsMoving => movement.magnitude > 0.1f;
+    public bool IsRunning => Keyboard.current.leftShiftKey.isPressed && IsMoving;
 
     void Start()
     {
@@ -34,9 +36,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        bool isRunning = Keyboard.current.leftShiftKey.isPressed;
-
-        float currentSpeed = isRunning ? runSpeed : speed;
+        float currentSpeed = IsRunning ? runSpeed : speed;
 
         transform.Translate(movement * currentSpeed * Time.deltaTime);
     }
@@ -47,7 +47,8 @@ public class Player : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             sceneLoader.LoadScene("Death");
-        }else if (collision.gameObject.CompareTag("Exit"))
+        }
+        else if (collision.gameObject.CompareTag("Exit"))
         {
             sceneLoader.LoadScene("Victory");
         }

@@ -274,11 +274,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6162294970823720618, guid: e4c5624feac157d488a8dd76fc76a171, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.62
+      value: -6.37
       objectReference: {fileID: 0}
     - target: {fileID: 6162294970823720618, guid: e4c5624feac157d488a8dd76fc76a171, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.58
+      value: 2.03
       objectReference: {fileID: 0}
     - target: {fileID: 6162294970823720618, guid: e4c5624feac157d488a8dd76fc76a171, type: 3}
       propertyPath: m_LocalPosition.z
@@ -344,6 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41bada101aa6c2e4da2ceb9b4f616235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHearing
+  hearsWalking: 1
 --- !u!58 &505302584
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -588,7 +589,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f785aa0cefc93064f9802bb68c0d66ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonidoJUgador
-  noiseRadius: 2.76
+  walkNoiseRadius: 2
+  runNoiseRadius: 4
   stepInterval: 0.64
 --- !u!1001 &5623934663100534343
 PrefabInstance:
