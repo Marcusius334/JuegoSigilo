@@ -9,9 +9,9 @@ public class vision_hitbox : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Algo ha entrado en la visión: " + other.name);
+        //Debug.Log("Algo ha entrado en la visión: " + other.name);
         if (!other.CompareTag("Player")) return;
-        Debug.Log("¡Jugador detectado dentro de la visión!");
+        //Debug.Log("¡Jugador detectado dentro de la visión!");
 
         Vector2 direccion = other.transform.position - transform.position;
 
@@ -24,13 +24,13 @@ public class vision_hitbox : MonoBehaviour
 
         if (hit.collider == null)
         {
-            Debug.Log("No hay ningún muro. ¡Jugador detectado!");
+            //Debug.Log("No hay ningún muro. ¡Jugador detectado!");
             if (goblin != null) goblin.FollowMode(other.transform);
             else skeleton.FollowMode(other.transform);
         }
         else
         {
-            Debug.Log("Hay un muro entre el goblin y el jugador.");
+            //Debug.Log("Hay un muro entre el goblin y el jugador.");
         }
     }
 
