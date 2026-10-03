@@ -1,90 +1,33 @@
 using UnityEngine;
 
-public class slimeIA : MonoBehaviour
+public class slimeIA : Enemy
 {
-    public enum Estado
-    {
-        Buscando,
-        Persiguiendo
-    }
-
-    public SpriteRenderer sprite;
-    public Estado estadoActual;
-
-    private Vector2 wanderTarget;
-    private Vector2 moveDirection;
-
-    private Vector3 velocity;
-    private Vector3 acceleration;
-    private Transform jugador;
-    public float tiempoSinVerJugador;
-
-    private int avoidanceSide;
-
-
-
-    [Header("Parámetros de Wander")]
-    public float wanderRadius = 2.0f;
-    public float wanderDistance = 4.0f;
-    public float wanderJitter = 0.5f;
-
-    [Header("Parámetros de Evasión / Rebote")]
-    public float avoidDistance = 1.5f; // Distancia para detectar la pared antes del choque
-    public LayerMask obstacleMask;
-
-    [Header("Movimiento Constante")]
-    public float maxSpeed = 5.0f;
-
-    [Header("Seek")]//Esto es para el seek
-    public float maxForce = 0.2f;
-    public float tiempoDePersecucion = 5f;
-
     [Header("Deteccion")]//Provisional
     public float radioDeteccion = 2f;
-
-    public LayerMask obstacleLayer;
-    public float obstacleDistance = 3f;
-    public float emergencyDistance = 0.5f;
     
-
     void Start()
     {
-        avoidanceSide = 0;//Cosa de obstacle
         estadoActual = Estado.Buscando;
-
-        // Inicializamos una dirección aleatoria y la normalizamos
-        moveDirection = Random.insideUnitCircle.normalized;
-        // Punto inicial dentro del círculo de wander
-        wanderTarget = Random.insideUnitCircle * wanderRadius;
-
-        //Inicialización para el Seek
-        velocity = Vector3.zero;
-        acceleration = Vector3.zero;
-
-        //Porvisional
-        jugador = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
+    //===============================
+    //UPDATE
+    //===============================
     void Update()
     {
-        
-
         if (estadoActual == Estado.Buscando)
         {
-            // 1. Primero comprobamos si hay una pared al frente para rebotar
-            CheckWallCollision();
-
-            // 2. Si no rebotó, aplicamos la variación de dirección ligera del Wander
+            // Aplicamos la variación de dirección ligera del Wander
             ApplyWanderDirect();
 
             ObstacleAvoidance();
 
-            // 3. Movimiento a VELOCIDAD CONSTANTE
+            // Movimiento a VELOCIDAD CONSTANTE
             transform.Translate(moveDirection * maxSpeed * Time.deltaTime, Space.World);
         }
         else if (estadoActual == Estado.Persiguiendo) 
         {
-            Seek(jugador.position);
+            Seek(playerTrn.position);
             
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
@@ -125,210 +68,7 @@ public class slimeIA : MonoBehaviour
                 sprite.flipX = false;
         }
     }
-
-    void ObstacleAvoidance()
-    {
-        //Si está parado no hace falta buscar obstáculos
-        if (velocity.magnitude < 0.01f){
-            return;
-        }
-
-        // Tres rayos: centro, izquierda y derecha
-        Vector2 direction = velocity.normalized;
-        Vector2 leftDir = Quaternion.Euler(0, 0, 30) * direction;
-        Vector2 rightDir = Quaternion.Euler(0, 0, -30) * direction;
-
-        float sideDistance = obstacleDistance * 0.6f;
-
-        // Dibujar rayos
-        Debug.DrawRay(transform.position, direction * obstacleDistance, Color.red);
-        Debug.DrawRay(transform.position, leftDir * sideDistance, Color.yellow);
-        Debug.DrawRay(transform.position, rightDir * sideDistance, Color.yellow);
-
-        RaycastHit2D hitCenter = Physics2D.Raycast( //Crea un rayo que va
-            transform.position,                     //desde una posición
-            direction,                              //con una dirección
-            obstacleDistance,                       //una distáncia máxima
-            obstacleLayer                           //y detecta esta layer
-        ); 
-
-        RaycastHit2D hitLeft = Physics2D.Raycast(
-            transform.position,
-            leftDir,
-            sideDistance,
-            obstacleLayer
-        );
-
-        RaycastHit2D hitRight = Physics2D.Raycast(
-            transform.position,
-            rightDir,
-            sideDistance,
-            obstacleLayer
-        );
-
-        Vector2 avoidance = Vector2.zero;
-
-        // Obstáculo de frente
-        if (hitCenter.collider != null)
-        {
-            //rozando la pared se sale de todo con 180
-            if (hitCenter.distance < emergencyDistance)
-            {
-                Vector2 oppositeDirection = -direction;
-
-                Vector3 desired = oppositeDirection * maxSpeed;
-                Vector3 steer = desired - velocity;
-
-                steer = Vector3.ClampMagnitude(
-                    steer,
-                    maxForce * 3f
-                );
-
-                applyForce(steer);
-
-                return;
-            }
-
-            //Se busca si los lados están libres para que la nueva posición no sea recto (porque se chocaría con pared)
-            //para que no se siga llendo recto y pasen cosas malas
-            float leftDistance = hitLeft.collider != null ? hitLeft.distance : Mathf.Infinity;
-            float rightDistance = hitRight.collider != null ? hitRight.distance : Mathf.Infinity;
-            
-            // Solo elegimos el lado si todavía no tenemos uno elegido
-            //Cosa para que no se quede stuck
-            if (avoidanceSide == 0)
-            {
-                if (leftDistance > rightDistance)
-                {
-                    avoidanceSide = -1;
-                }
-                else
-                {
-                    avoidanceSide = 1;
-                }
-            }
-
-            //nuevo target
-            avoidance += hitCenter.normal;
-            if (avoidanceSide == -1)
-            {
-                avoidance += leftDir;
-            }
-            else
-            {
-                avoidance += rightDir;
-            }
-        }
-
-        // Obstáculo a la izquierda
-        if (hitLeft.collider != null)
-        {
-            avoidance += rightDir;
-        }
-
-        // Obstáculo a la derecha
-        if (hitRight.collider != null)
-        {
-            avoidance += leftDir;
-        }
-
-        //Esto genera la nueva dirección deseada y se aplica fuerza en consecuencia a lo Steer
-        if (avoidance != Vector2.zero)
-        {
-            avoidance.Normalize();
-
-            Vector3 desired = avoidance * maxSpeed;
-            Vector3 steer = desired - velocity;
-
-            steer = Vector3.ClampMagnitude(steer, maxForce * 2f);
-
-            applyForce(steer);
-        }
-    }
-
-    //===============================
-    //SEEK
-    //===============================
-    void applyForce(Vector3 force)
-    {
-        acceleration += force; // this.acceleration.add(force);
-    }
-    void Seek(Vector3 target)
-    {
-        //direccion desde el Goblin hacia el objetivo -> let desired = p5.Vector.sub(target, this.position);
-        Vector3 desired = target - transform.position;
-
-        //Si el goblin todavia NO está sobre el jugador -> desired.setMag(this.maxspeed);
-        if (desired.magnitude > 0.01f) { desired = desired.normalized * maxSpeed; } //lo que hace esq el vector desired tenga una longitud igual a maxSpeed
-
-        //fuerza de dirección -> let steer = p5.Vector.sub(desired, this.velocity);
-        Vector3 steer = desired - velocity;
-
-        //limitar la fuerza maxima -> steer.limit(this.maxforce);
-        steer = Vector3.ClampMagnitude(steer, maxForce);
-
-        //aplicar fuerza -> this.applyForce(steer);
-        applyForce(steer);
-    }
-
-    //===============================
-    //DETECTAR PLAYER (provisional) Esta funcion se tiene que cambiar para que, en lugar de chocar con los slimes, que detecten las vibraciones
-    //===============================
-
-
-
-    //===============================
-    //WANDER
-    //===============================
-    void CheckWallCollision()
-    {
-        // 3 Direcciones de rayos en abanico
-        Vector2 forward = moveDirection;
-        Vector2 left = Quaternion.Euler(0, 0, 35) * forward;
-        Vector2 right = Quaternion.Euler(0, 0, -35) * forward;
-
-        Vector2[] rayDirections = new Vector2[] { forward, left, right };
-
-        foreach (var dir in rayDirections)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, avoidDistance, obstacleMask);
-
-            if (hit.collider != null)
-            {
-                // Reflejamos la dirección de movimiento según la normal del muro
-                if (hit.distance < avoidDistance) moveDirection *= -1;
-                //moveDirection = Vector2.Reflect(moveDirection, hit.normal).normalized;
-
-                // Reiniciamos el objetivo de Wander para que apunte en la nueva dirección
-                wanderTarget = Random.insideUnitCircle * wanderRadius;
-
-                // Salimos del bucle para no procesar múltiples rebotes en el mismo frame
-                break;
-            }
-        }
-    }
-
-    void ApplyWanderDirect()
-    {
-        // Añadimos pequeña variación aleatoria
-        wanderTarget += new Vector2(
-            Random.Range(-1f, 1f) * wanderJitter,
-            Random.Range(-1f, 1f) * wanderJitter
-        );
-
-        wanderTarget = wanderTarget.normalized * wanderRadius;
-
-        // Proyectamos el objetivo hacia adelante en base a la dirección actual
-        Vector2 circleCenter = moveDirection * wanderDistance;
-        
-        // Obtenemos la dirección deseada
-        Vector2 targetWorldDirection = (circleCenter + wanderTarget).normalized;
-
-        // Rotamos suavemente la dirección actual hacia la dirección del Wander
-        moveDirection = Vector2.Lerp(moveDirection, targetWorldDirection, Time.deltaTime * 3.0f).normalized;
-    }
-
-
+    
     //===============================
     //DIBUJAR EL AREA DE DETECCION DEL SLIME
     //===============================

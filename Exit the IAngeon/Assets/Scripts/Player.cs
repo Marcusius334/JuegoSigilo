@@ -53,4 +53,9 @@ public class Player : MonoBehaviour
             sceneLoader.LoadScene("Victory");
         }
     }
+
+    public bool Running()//Para que se pueda saber si el jugador corre fuera de player
+    {
+        return IsRunning;
+    }
 }

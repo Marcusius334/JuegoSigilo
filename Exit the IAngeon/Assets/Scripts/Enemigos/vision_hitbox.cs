@@ -6,6 +6,7 @@ public class vision_hitbox : MonoBehaviour
 
     public Goblin goblin;
     public Skeleton skeleton;
+    public Enemy enemy;
     
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -45,7 +46,7 @@ public class vision_hitbox : MonoBehaviour
             if (otroEnemigo == skeleton) return;
 
             //Comprobamos su estado:
-            if (otroEnemigo.EstaPersiguiendo()) skeleton.FollowMode(otroEnemigo.jugador);
+            if (otroEnemigo.EstaPersiguiendo()) skeleton.FollowMode(otroEnemigo.PlayerTransform());
         }
     }
 

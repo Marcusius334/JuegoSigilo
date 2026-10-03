@@ -4,59 +4,14 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
 
-public class Goblin : MonoBehaviour, IHearing
-{
-    public enum Estado{
-        Patrullando,
-        Buscando, //TODOS LOS SITIOS LOS QUE PONGA BUSCANDO HAY Q SUSTITUIRLOS POR PATRULLANDO (he usado el estado Buscando para hacer pruebas solo )
-        SeguirSonido,
-        Persiguiendo,
-        Acorralando
-    }
-
-    private Estado estadoActual;
-    private Vector3 lastPosition;
-    private SpriteRenderer sprite;
-    private Vector3 rotacionVision;
-
-    //SEEK
-    public Vector3 velocity;
-    private Vector3 acceleration;
-    private Transform jugador;
-    private AudioSource audioSource;
-    public float tiempoSinVerJugador = 0f;
-    private int avoidanceSide;
-    private bool haVistoPersonalmenteAlJugador = false;// Indica si ESTE goblin ha visto personalmente al jugador.
-    private Goblin liderGoblin; // Si está persiguiendo porque otro goblin le avisó, aquí guardamos quién fue ese goblin.
-    private float ultimoMomentoVioJugador = -Mathf.Infinity;// Último momento en el que este goblin vio personalmente al jugador.
-
-    //ACORRALAMIENTO 
-    private Vector3 objetivoAcorralamiento;
-    private bool tieneObjetivoAcorralamiento;
-    private bool acorralamientoIniciado = false;
-
-    [Header("Acorralamiento")]
-    public float radioAcorralamiento = 3f;
-    public float distanciaParaAcorralar = 20f;
-    public float anguloAcorralamiento = 360f;
-    public int maxGoblinsAcorralamiento = 6;
-
-    public Transform conoVision;
-    public float velocidadRotacion = 15f;
-    
-    [Header("Seek")]
-    public float maxSpeed = 5f;
-    public float maxForce = 0.2f;
-    public float tiempoDePersecucion = 8f;
-    public float noiseRadius = 5f;
-
+public class Goblin : Enemy
+{    
     [Header("Floking")]
     [Tooltip("Radio en el que busca a otros individuos para formar o unirse a una manada.")]
+    public LayerMask GoblinLayer;
+    private Vector3 fuerzaWander;
     public float perceptionRadius = 8.0f;
     public float separationRadius = 1.0f;
-    public LayerMask GoblinLayer;
-    private Vector3 wanderDirection;
-    private Vector3 fuerzaWander;
 
     [Header("Pesos de Comportamiento")]
     public float separationWeight = 1.5f;
@@ -64,22 +19,22 @@ public class Goblin : MonoBehaviour, IHearing
     public float cohesionWeight = 1.0f;
     public float wanderWeight = 0.5f;
 
-    public LayerMask obstacleLayer;
-    public float obstacleDistance = 3f;
-    public float emergencyDistance = 0.5f;
-    
-
+    [Header("Acorralamiento")]
+    private bool haVistoPersonalmenteAlJugador = false;// Indica si ESTE goblin ha visto personalmente al jugador.
+    private Goblin liderGoblin; // Si está persiguiendo porque otro goblin le avisó, aquí guardamos quién fue ese goblin.
+    private float ultimoMomentoVioJugador = -Mathf.Infinity;// Último momento en el que este goblin vio personalmente al jugador.
+    private Vector3 objetivoAcorralamiento;
+    private bool tieneObjetivoAcorralamiento;
+    private bool acorralamientoIniciado = false;
+    public float radioAcorralamiento = 3f;
+    public float distanciaParaAcorralar = 20f;
+    public float anguloAcorralamiento = 360f;
+    public int maxGoblinsAcorralamiento = 6;
 
     void Start()
     {
         estadoActual = Estado.Buscando;
-        velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
-        acceleration = Vector3.zero; //this.acceleration = createVector(0, 0);
-        audioSource = GetComponent<AudioSource>();
-        avoidanceSide = 0;//Cosa de obstacle
-
-        sprite = GetComponentInChildren<SpriteRenderer>();
-
+        
         //se inica con un movimiento aleatorio (por ahora):
         float min = -10f;
         float max = 10f;
@@ -93,7 +48,9 @@ public class Goblin : MonoBehaviour, IHearing
         fuerzaWander = Vector3.zero;
     }
 
-    // Update is called once per frame
+    //===============================
+    //UPDATE
+    //===============================
     void Update()
     {
         if (estadoActual == Estado.Buscando)
@@ -103,8 +60,8 @@ public class Goblin : MonoBehaviour, IHearing
         }
         else if (estadoActual == Estado.SeguirSonido) 
         {
-            if (jugador == null) return;
-            Seek(jugador.position);
+            if (playerTrn == null) return;
+            Seek(playerTrn.position);
             ObstacleAvoidance();
 
             velocity += acceleration;
@@ -117,7 +74,7 @@ public class Goblin : MonoBehaviour, IHearing
         {
             //CALCULAR EL SEEK:
 
-            Seek(jugador.position);
+            Seek(playerTrn.position);
             ObstacleAvoidance();
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
@@ -134,11 +91,11 @@ public class Goblin : MonoBehaviour, IHearing
             //resetear la aceleracion -> this.acceleration.mult(0);
             acceleration = Vector3.zero;
 
-            if (haVistoPersonalmenteAlJugador && jugador != null)
+            if (haVistoPersonalmenteAlJugador && playerTrn != null)
             {
                 float distanciaJugador = Vector3.Distance(
                     transform.position,
-                    jugador.position
+                    playerTrn.position
                 );
 
                 if (distanciaJugador <= distanciaParaAcorralar && !acorralamientoIniciado)
@@ -280,130 +237,9 @@ public class Goblin : MonoBehaviour, IHearing
         }
     }
 
-    void ObstacleAvoidance()
-    {
-        //Si está parado no hace falta buscar obstáculos
-        if (velocity.magnitude < 0.01f){
-            return;
-        }
-
-        // Tres rayos: centro, izquierda y derecha
-        Vector2 direction = velocity.normalized;
-        Vector2 leftDir = Quaternion.Euler(0, 0, 30) * direction;
-        Vector2 rightDir = Quaternion.Euler(0, 0, -30) * direction;
-
-        float sideDistance = obstacleDistance * 0.6f;
-
-        // Dibujar rayos
-        Debug.DrawRay(transform.position, direction * obstacleDistance, Color.red);
-        Debug.DrawRay(transform.position, leftDir * sideDistance, Color.yellow);
-        Debug.DrawRay(transform.position, rightDir * sideDistance, Color.yellow);
-
-        RaycastHit2D hitCenter = Physics2D.Raycast( //Crea un rayo que va
-            transform.position,                     //desde una posición
-            direction,                              //con una dirección
-            obstacleDistance,                       //una distáncia máxima
-            obstacleLayer                           //y detecta esta layer
-        ); 
-
-        RaycastHit2D hitLeft = Physics2D.Raycast(
-            transform.position,
-            leftDir,
-            sideDistance,
-            obstacleLayer
-        );
-
-        RaycastHit2D hitRight = Physics2D.Raycast(
-            transform.position,
-            rightDir,
-            sideDistance,
-            obstacleLayer
-        );
-
-        Vector2 avoidance = Vector2.zero;
-
-        // Obstáculo de frente
-        if (hitCenter.collider != null)
-        {
-            //rozando la pared se sale de todo con 180
-            if (hitCenter.distance < emergencyDistance)
-            {
-                Vector2 oppositeDirection = -direction;
-
-                Vector3 desired = oppositeDirection * maxSpeed;
-                Vector3 steer = desired - velocity;
-
-                steer = Vector3.ClampMagnitude(
-                    steer,
-                    maxForce * 3f
-                );
-
-                applyForce(steer);
-
-                return;
-            }
-
-            //Se busca si los lados están libres para que la nueva posición no sea recto (porque se chocaría con pared)
-            //para que no se siga llendo recto y pasen cosas malas
-            float leftDistance = hitLeft.collider != null ? hitLeft.distance : Mathf.Infinity;
-            float rightDistance = hitRight.collider != null ? hitRight.distance : Mathf.Infinity;
-            
-            // Solo elegimos el lado si todavía no tenemos uno elegido
-            //Cosa para que no se quede stuck
-            if (avoidanceSide == 0)
-            {
-                if (leftDistance > rightDistance)
-                {
-                    avoidanceSide = -1;
-                }
-                else
-                {
-                    avoidanceSide = 1;
-                }
-            }
-
-            //nuevo target
-            avoidance += hitCenter.normal;
-            if (avoidanceSide == -1)
-            {
-                avoidance += leftDir;
-            }
-            else
-            {
-                avoidance += rightDir;
-            }
-        }
-
-        // Obstáculo a la izquierda
-        if (hitLeft.collider != null)
-        {
-            avoidance += rightDir;
-        }
-
-        // Obstáculo a la derecha
-        if (hitRight.collider != null)
-        {
-            avoidance += leftDir;
-        }
-
-        //Esto genera la nueva dirección deseada y se aplica fuerza en consecuencia a lo Steer
-        if (avoidance != Vector2.zero)
-        {
-            avoidance.Normalize();
-
-            Vector3 desired = avoidance * maxSpeed;
-            Vector3 steer = desired - velocity;
-
-            steer = Vector3.ClampMagnitude(steer, maxForce * 2f);
-
-            applyForce(steer);
-        }
-    }
-
     //===============================
-    //SEEK
+    //PERDER JUGADOR
     //===============================
-
     void PerderJugador()
     {
         velocity = Vector3.zero;
@@ -463,41 +299,19 @@ public class Goblin : MonoBehaviour, IHearing
         estadoActual = Estado.Buscando;
 
         liderGoblin = null;
-        jugador = null;
+        playerTrn = null;
 
         tieneObjetivoAcorralamiento = false;
         tiempoSinVerJugador = 0f;
     }
-    void applyForce(Vector3 force)
-    {
-        acceleration += force; // this.acceleration.add(force);
-    }
-    void Seek(Vector3 target)
-    {
-        //direccion desde el Goblin hacia el objetivo -> let desired = p5.Vector.sub(target, this.position);
-        Vector3 desired = target - transform.position;
-
-        Debug.Log("Desired: " + desired);
-        //Si el goblin todavia NO está sobre el jugador -> desired.setMag(this.maxspeed);
-        if (desired.magnitude > 0.01f) {desired = desired.normalized * maxSpeed; } //lo que hace esq el vector desired tenga una longitud igual a maxSpeed
-
-        //fuerza de dirección -> let steer = p5.Vector.sub(desired, this.velocity);
-        Vector3 steer = desired - velocity;
-
-        Debug.Log("Steer: " + steer);
-        //limitar la fuerza maxima -> steer.limit(this.maxforce);
-        steer = Vector3.ClampMagnitude(steer, maxForce);
-        
-        //aplicar fuerza -> this.applyForce(steer);
-        applyForce(steer);
-    }
+    
 
     //===============================
     //COMPORTAMIENTO INTELIGENTE (Acorralamiento)
     //===============================
     public void IniciarAcorralamiento() 
     {
-        if (jugador == null) return;
+        if (playerTrn == null) return;
 
         Collider2D[] goblinsCercanos = Physics2D.OverlapCircleAll(
         transform.position,
@@ -532,7 +346,7 @@ public class Goblin : MonoBehaviour, IHearing
             float radianes = angulo * Mathf.Deg2Rad;
 
             //Posicion alrededor del jugador 
-            Vector3 posicion = jugador.position + new Vector3(Mathf.Cos(radianes), Mathf.Sin(radianes), 0) * radioAcorralamiento;
+            Vector3 posicion = playerTrn.position + new Vector3(Mathf.Cos(radianes), Mathf.Sin(radianes), 0) * radioAcorralamiento;
 
             //Mandar al Goblin a esa posicion 
             goblinsDisponibles[i].IrAcorralamiento(posicion);
@@ -559,7 +373,7 @@ public class Goblin : MonoBehaviour, IHearing
     {
         Scream();
         estadoActual = Estado.Persiguiendo;
-        jugador = objetivo;
+        playerTrn = objetivo;
 
         //Los Goblins que entran en FOLLOWMODE son los que SI han visto al jugador (no los que escuchan)
         haVistoPersonalmenteAlJugador = true;
@@ -571,7 +385,7 @@ public class Goblin : MonoBehaviour, IHearing
     }
     private void AvisarPosicionJugador()
     {
-        if (jugador == null) return;
+        if (playerTrn == null) return;
 
         Collider2D[] goblinsCercanos = Physics2D.OverlapCircleAll(
             transform.position,
@@ -586,24 +400,13 @@ public class Goblin : MonoBehaviour, IHearing
             if (goblin == null || goblin == this)
                 continue;
 
-            goblin.FollowSound(jugador, this);
+            goblin.FollowSound(playerTrn, this);
         }
     }
-    //Es lo mismo que FollowMode pero adaptado a escuchar el sonido
-    //Se podría cambiar para usar A* tal vez
-    public void FollowSound(Transform objetivo, Goblin lider)
-    {
-        estadoActual = Estado.SeguirSonido;
-        //Vector2 sonido = objetivo; //^^Same^^^^^^
-        //Todo lo de abajo es simplemente para probar que funciona, cuando lo del sonido se cambia
-        jugador = objetivo;
 
-        haVistoPersonalmenteAlJugador = false;
-        liderGoblin = lider; //Guardamos el Goblin que le ha avisado (lider)
-        tiempoSinVerJugador = 0f;
-        
-    }
-
+    //===============================
+    //NOISE
+    //===============================
     //Esta función pretende alertar a los goblins cercanos en un radio marcado en el inspector
     public void Scream()
     {
@@ -613,13 +416,27 @@ public class Goblin : MonoBehaviour, IHearing
     }
 
     //Escuchar el sonido
-    public void SetNoisePosition(Transform noisePosition)
+    public override void SetNoisePosition(Transform noisePosition)
     {
         Goblin lider = noisePosition.GetComponent<Goblin>();
 
         FollowSound(noisePosition, lider);
     }
 
+     //Es lo mismo que FollowMode pero adaptado a escuchar el sonido
+    //Se podría cambiar para usar A* tal vez
+    public void FollowSound(Transform objetivo, Goblin lider)
+    {
+        estadoActual = Estado.SeguirSonido;
+        //Vector2 sonido = objetivo; //^^Same^^^^^^
+        //Todo lo de abajo es simplemente para probar que funciona, cuando lo del sonido se cambia
+        playerTrn = objetivo;
+
+        haVistoPersonalmenteAlJugador = false;
+        liderGoblin = lider; //Guardamos el Goblin que le ha avisado (lider)
+        tiempoSinVerJugador = 0f;
+        
+    }
 
     //===============================
     //DIBUJAR EL AREA DE DETECCION DEL GOBLIN
