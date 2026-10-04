@@ -33,7 +33,21 @@ public class Goblin : Enemy
 
     void Start()
     {
-        estadoActual = Estado.Buscando;
+       
+        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)   //Empezara a patrullar dados los puntos en el inspector
+        {
+            estadoActual = Estado.Patrullando;
+        }
+        else
+        {
+            estadoActual = Estado.Buscando;
+        }
+        
+        
+        fuerzaWander = Vector3.zero;    //La fuerza a cero patatero
+       
+       
+       /* estadoActual = Estado.Buscando;                Por si acaso lo comento xd!!!!
         
         //se inica con un movimiento aleatorio (por ahora):
         float min = -10f;
@@ -45,7 +59,7 @@ public class Goblin : Enemy
         );
         //velocity = vectorAleatorio.normalized * maxSpeed; para que inicien con una posicion aleatoria 
         //fuerzaWander = velocity;
-        fuerzaWander = Vector3.zero;
+        fuerzaWander = Vector3.zero;*/
     }
 
     //===============================
@@ -122,7 +136,12 @@ public class Goblin : Enemy
         }
         else if (estadoActual == Estado.Patrullando)
         {
+            fuerzaWander = CalcularDireccionPatrulla(); // Calcula la ruta
+            ObstacleAvoidance();                        // Esquiva las paredes
+
+            
             //CALCULAR EL FLOKING: //Solo se hace flockin g cuando patrullan juntos 
+
 
             //buscar goblins cercanos:
             Collider2D[] nearbyGoblins = Physics2D.OverlapCircleAll(transform.position, perceptionRadius, GoblinLayer);
@@ -245,7 +264,13 @@ public class Goblin : Enemy
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
 
-        estadoActual = Estado.Buscando;
+        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0){
+
+            EncontrarPuntoMasCercano(); //  Busca el punto mas cercano, tambien temporal hasta el Pathfollowing A*
+            estadoActual = Estado.Patrullando;
+        }
+        else
+            estadoActual = Estado.Buscando;
 
         haVistoPersonalmenteAlJugador = false;
         liderGoblin = null;
@@ -296,7 +321,12 @@ public class Goblin : Enemy
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
 
-        estadoActual = Estado.Buscando;
+        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0){
+            EncontrarPuntoMasCercano(); //  Busca el punto mas cercano, tambien temporal hasta el Pathfollowing A*
+            estadoActual = Estado.Patrullando;
+        }
+        else
+            estadoActual = Estado.Buscando;
 
         liderGoblin = null;
         playerTrn = null;

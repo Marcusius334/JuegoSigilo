@@ -48,6 +48,11 @@ public class Enemy : MonoBehaviour, IHearing
     public float obstacleDistance = 3f;
     public float emergencyDistance = 0.5f;
 
+    [Header("Patrulla (Waypoints)")]
+    public Transform[] puntosDePatrulla;
+    protected int indicePatrulla = 0;
+    public float distanciaCambioPunto = 0.5f;
+
 
 
     //===============================
@@ -263,6 +268,11 @@ public class Enemy : MonoBehaviour, IHearing
 
                 return;
             }
+            else  //temporal hata el Pathfollowing A*
+            {
+            // Si no hay obstáculo de frente, reseteamos el lado para evitar que se ralle
+            avoidanceSide = 0; 
+            } 
 
             //Se busca si los lados están libres para que la nueva posición no sea recto (porque se chocaría con pared)
             //para que no se siga llendo recto y pasen cosas malas
@@ -319,6 +329,54 @@ public class Enemy : MonoBehaviour, IHearing
 
             applyForce(steer);
         }
+    }
+
+    //===============================
+    //Patrulla Waypoints
+    //===============================
+
+    protected void EncontrarPuntoMasCercano()   //Esto es temporal hasta el Pathfollowing A* para que no se ralle el bicho
+    {
+        if (puntosDePatrulla == null || puntosDePatrulla.Length == 0) return;
+        
+        float distanciaMinima = Mathf.Infinity;
+        int indiceMasCercano = 0;
+        
+        for (int i = 0; i < puntosDePatrulla.Length; i++)
+        {
+            float distancia = Vector3.Distance(transform.position, puntosDePatrulla[i].position);
+            if (distancia < distanciaMinima)
+            {
+                distanciaMinima = distancia;
+                indiceMasCercano = i;
+            }
+        }
+        
+        // Ahora su nuevo objetivo sera el punto que tenga mas cerca
+        indicePatrulla = indiceMasCercano;
+    }
+
+
+    protected Vector3 CalcularDireccionPatrulla()
+    {
+        if (puntosDePatrulla == null || puntosDePatrulla.Length == 0) 
+            return Vector3.zero;
+
+        Transform objetivo = puntosDePatrulla[indicePatrulla];
+        float distancia = Vector3.Distance(transform.position, objetivo.position);
+
+        if (distancia < distanciaCambioPunto)
+        {
+            indicePatrulla++;
+            if (indicePatrulla >= puntosDePatrulla.Length)
+            {
+                indicePatrulla = 0;
+            }
+            objetivo = puntosDePatrulla[indicePatrulla];
+        }
+
+        // Dirección hacia el punto
+        return (objetivo.position - transform.position).normalized * maxSpeed;
     }
 
 }

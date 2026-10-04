@@ -5,7 +5,11 @@ public class Skeleton : Enemy
 {
     void Start()
     {
-        estadoActual = Estado.Buscando;
+        
+        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)  // Comprobacion si tiene puntos de Rutita
+            estadoActual = Estado.Patrullando;
+        else
+            estadoActual = Estado.Buscando;
     }
 
     //===============================
@@ -45,11 +49,41 @@ public class Skeleton : Enemy
             //resetear la aceleracion -> this.acceleration.mult(0);
             acceleration = Vector3.zero;
         }
+        else if (estadoActual == Estado.Patrullando)
+        {
+            Vector3 direccionRuta = CalcularDireccionPatrulla();
+            velocity = Vector3.Lerp(velocity, direccionRuta, Time.deltaTime * 2f);
+            
+            ObstacleAvoidance();
+
+            
+            velocity += acceleration; 
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+            transform.position += velocity * Time.deltaTime;
+            
+            rotacionVision = velocity.normalized;
+            if (rotacionVision != Vector3.zero)
+            {
+                float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
+                float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
+                Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
+                conoVision.rotation = Quaternion.Slerp(
+                    conoVision.rotation, 
+                    rotacionObjetivo, 
+                    velocidadRotacion * Time.deltaTime
+                );
+            }
+            acceleration = Vector3.zero;
+            
+            firstPursue = true; // Prepara el pursue por si pasa a perseguir
+        }
         else
         {
             //Al tener otro estado, prepara el pursue para que el if funcione
             firstPursue = true;
+            velocity = Vector3.zero; // Nos aseguramos de que no se deslice si esta buscando
         }
+
         //Debug.Log("Velocity: " + velocity);
 
     }
