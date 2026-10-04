@@ -10,6 +10,10 @@ public class Key : MonoBehaviour
     {
         if (playerNear && Keyboard.current.eKey.wasPressedThisFrame)
         {
+            if (player != null)
+            {
+                player.hasKey = true; // Esto es para marcar que el jugador ha pillao la llave
+            }
             Destroy(gameObject);
         }
     }

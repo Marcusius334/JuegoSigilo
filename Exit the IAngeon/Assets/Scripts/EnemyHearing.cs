@@ -15,10 +15,10 @@ public class EnemyHearing : MonoBehaviour
 
         slimeia = GetComponent<slimeIA>();
 
-        if (slimeia == null)
+        /*if (slimeia == null)
             Debug.LogError("NO SE ENCUENTRA SLIMEIA");
         else
-            Debug.Log("SLIMEIA ENCONTRADO");
+            Debug.Log("SLIMEIA ENCONTRADO");*/
     }
 
     public void HearNoise(Transform noisePosition, bool isRunning)
