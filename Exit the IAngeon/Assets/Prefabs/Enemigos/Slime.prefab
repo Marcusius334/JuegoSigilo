@@ -101,6 +101,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6162294970823720618}
   - component: {fileID: 6755546813526041242}
+  - component: {fileID: 7257005611697658128}
+  - component: {fileID: 4718347792659879449}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Enemy
@@ -136,12 +138,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ba533eee33e45643817c3e1feefab7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::slimeIA
-  sprite: {fileID: 1422192950040692355}
+  tiempoDePersecucion: 5
+  tiempoSinVerJugador: 0
+  estadoActual: 0
+  noiseRadius: 5
+  conoVision: {fileID: 0}
+  velocidadRotacion: 15
+  maxSpeed: 0.5
+  maxForce: 0.2
   wanderRadius: 6
   wanderDistance: 4
   wanderJitter: 4
-  avoidDistance: 0.2
-  obstacleMask:
+  obstacleLayer:
     serializedVersion: 2
-    m_Bits: 8
-  maxSpeed: 0.5
+    m_Bits: 0
+  obstacleDistance: 3
+  emergencyDistance: 0.5
+  radioDeteccion: 2.47
+--- !u!114 &7257005611697658128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5142378244692130854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41bada101aa6c2e4da2ceb9b4f616235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHearing
+  hearsWalking: 1
+--- !u!58 &4718347792659879449
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5142378244692130854}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
