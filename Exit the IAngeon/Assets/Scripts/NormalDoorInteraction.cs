@@ -1,15 +1,14 @@
 using UnityEngine;
 
-public class DoorInteraction : MonoBehaviour
+public class NormalDoorInteraction : MonoBehaviour
 {
-    public Door door;
+    public NormalDoor door;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            Player playerScript = other.GetComponent<Player>(); // Pillamos el script del jugador
-            door.PlayerNear(playerScript); // Le pasamos el jugador a la puerta para que sepa que esta cerquita
+            door.PlayerNear();
         }
     }
 
