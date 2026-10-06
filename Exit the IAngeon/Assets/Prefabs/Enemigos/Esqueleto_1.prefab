@@ -10,11 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 999502188494007300, guid: 3662b1529b2b2174e97ecd6d9b8289a7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.14
       objectReference: {fileID: 0}
     - target: {fileID: 999502188494007300, guid: 3662b1529b2b2174e97ecd6d9b8289a7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 7.43
       objectReference: {fileID: 0}
     - target: {fileID: 999502188494007300, guid: 3662b1529b2b2174e97ecd6d9b8289a7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -50,7 +50,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1155499436406140173, guid: 3662b1529b2b2174e97ecd6d9b8289a7, type: 3}
       propertyPath: m_Name
-      value: Esqueleto
+      value: Esqueleto_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1155499436406140173, guid: 3662b1529b2b2174e97ecd6d9b8289a7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4106646743460966883, guid: 3662b1529b2b2174e97ecd6d9b8289a7, type: 3}
+      propertyPath: maxSpeed
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

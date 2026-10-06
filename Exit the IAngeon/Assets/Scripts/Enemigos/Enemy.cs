@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour, IHearing
 {
@@ -53,7 +54,18 @@ public class Enemy : MonoBehaviour, IHearing
     protected int indicePatrulla = 0;
     public float distanciaCambioPunto = 0.5f;
 
+    //===============================
+    // A*
+    //===============================
+    protected AStarPathfinding pathfinding;
 
+    protected List<AStarNode> caminoAStar;
+    protected int indiceCaminoAStar;
+
+    [SerializeField] protected float distanciaNodoAStar = 1f;
+    [SerializeField] protected float tiempoRecalculoAStar = 0.3f;
+
+    protected float temporizadorAStar;
 
     //===============================
     //LOS DIFERENTES ESTADOS
@@ -97,6 +109,8 @@ public class Enemy : MonoBehaviour, IHearing
 
         //Preparación para el obstacle avoidance
         avoidanceSide = 0;//Cosa de obstacle
+
+        pathfinding = FindFirstObjectByType<AStarPathfinding>();
     }  
 
     //===============================
@@ -377,6 +391,69 @@ public class Enemy : MonoBehaviour, IHearing
 
         // Dirección hacia el punto
         return (objetivo.position - transform.position).normalized * maxSpeed;
+    }
+
+    //===============================
+    // PATHFINDING A*
+    //===============================
+
+    protected void CalcularCaminoAStar(Vector3 objetivo)
+    {
+        if (pathfinding == null)
+        {
+            Debug.LogWarning("No se ha encontrado AStarPathfinding.");
+            return;
+        }
+
+        caminoAStar = pathfinding.BuscarCamino(
+            transform.position,
+            objetivo
+        );
+
+        indiceCaminoAStar = 0;
+        temporizadorAStar = tiempoRecalculoAStar;
+    }
+
+    protected Vector3 ObtenerSiguienteNodoAStar(Vector3 objetivo)
+    {
+        if (caminoAStar == null || caminoAStar.Count == 0)
+        {
+            CalcularCaminoAStar(objetivo);
+        }
+
+        if (caminoAStar == null || caminoAStar.Count == 0)
+            return transform.position;
+
+        if (indiceCaminoAStar < caminoAStar.Count)
+        {
+            float distancia = Vector2.Distance(
+                transform.position,
+                caminoAStar[indiceCaminoAStar].Posicion
+            );
+
+            if (distancia <= distanciaNodoAStar)
+            {
+                indiceCaminoAStar++;
+            }
+        }
+
+        if (indiceCaminoAStar >= caminoAStar.Count)
+        {
+            return caminoAStar[caminoAStar.Count - 1].Posicion;
+        }
+
+        Debug.Log(
+            "Nodo actual: " + indiceCaminoAStar +
+            " / " + caminoAStar.Count
+        );
+
+        return caminoAStar[indiceCaminoAStar].Posicion;
+    }
+
+    protected void ReiniciarCaminoAStar()
+    {
+        caminoAStar = null;
+        indiceCaminoAStar = 0;
     }
 
 }

@@ -3,6 +3,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Skeleton : Enemy
 {
+    
     void Start()
     {
         
@@ -10,6 +11,8 @@ public class Skeleton : Enemy
             estadoActual = Estado.Patrullando;
         else
             estadoActual = Estado.Buscando;
+        
+        
     }
 
     //===============================
@@ -19,35 +22,43 @@ public class Skeleton : Enemy
     {
         if (estadoActual == Estado.Persiguiendo) 
         {
-            Pursue(playerTrn.position);
-            ObstacleAvoidance();
+            Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
 
-            //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
-            velocity += acceleration; 
-            //limita la velocidad actual a la velocidad máxima -> this.velocity.limit(this.maxspeed);
+            Vector3 direccion = (siguienteNodo - transform.position).normalized;
+
+            velocity = direccion * maxSpeed;
+            
+            velocity += acceleration;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            //mover el goblin -> this.position.add(this.velocity);
             transform.position += velocity * Time.deltaTime;
-            //rotar cono de vision según el movimiento:
+
             rotacionVision = velocity.normalized;
+
             if (rotacionVision != Vector3.zero)
             {
-                //Se calcula el angulo:
                 float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
                 float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
-
-                //Crea la rotación en Z:
                 Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
-
-                //Aplica la rotación:
                 conoVision.rotation = Quaternion.Slerp(
                     conoVision.rotation, 
                     rotacionObjetivo, 
                     velocidadRotacion * Time.deltaTime
                 );
             }
-            //resetear la aceleracion -> this.acceleration.mult(0);
+
             acceleration = Vector3.zero;
+
+            tiempoSinVerJugador += Time.deltaTime;
+
+            if (tiempoSinVerJugador >= tiempoDePersecucion)
+            {
+                estadoActual = Estado.Buscando;
+                tiempoSinVerJugador = 0f;
+                velocity = Vector3.zero;
+                ReiniciarCaminoAStar();
+
+                Debug.Log("Skeleton ha perdido al jugador");
+            }
         }
         else if (estadoActual == Estado.Patrullando)
         {
@@ -96,8 +107,10 @@ public class Skeleton : Enemy
         estadoActual = Estado.Persiguiendo;
         playerTrn = objetivo;
 
+        tiempoSinVerJugador = 0f;
+        ReiniciarCaminoAStar();
+
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
-        //lastPosition = pos;
     }
 
     //===============================

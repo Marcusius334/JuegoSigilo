@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class slimeIA : Enemy
 {
+    private Estado estadoAnterior;
     [Header("Deteccion")]//Provisional
     public float radioDeteccion = 2f;
     
     void Start()
     {
         estadoActual = Estado.Buscando;
+        estadoAnterior = estadoActual;
     }
 
     //===============================
@@ -15,6 +17,15 @@ public class slimeIA : Enemy
     //===============================
     void Update()
     {
+        if (estadoActual != estadoAnterior)
+        {
+            if (estadoActual == Estado.Persiguiendo)
+            {
+                ReiniciarCaminoAStar();
+            }
+
+            estadoAnterior = estadoActual;
+        }
         if (estadoActual == Estado.Buscando)
         {
             // Aplicamos la variación de dirección ligera del Wander
@@ -27,7 +38,11 @@ public class slimeIA : Enemy
         }
         else if (estadoActual == Estado.Persiguiendo) 
         {
-            Seek(playerTrn.position);
+            Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
+
+            Vector3 direccion = (siguienteNodo - transform.position).normalized;
+
+            velocity = direccion * maxSpeed;
             
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
@@ -68,6 +83,7 @@ public class slimeIA : Enemy
                 sprite.flipX = false;
         }
     }
+
     
     //===============================
     //DIBUJAR EL AREA DE DETECCION DEL SLIME
