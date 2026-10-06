@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Victory.unity
     guid: 40c3f72e329a7e24bb2b595ee39ac1ef
   - enabled: 1
+    path: Assets/Scenes/Pruebas/More/More.unity
+    guid: 0b3211b19cf54304ea529de5c9fac53d
+  - enabled: 1
     path: Assets/Scenes/More Mapa.unity
     guid: 5017ba543720bdc40bf52f9df68e64de
   m_configObjects:
