@@ -38,11 +38,17 @@ public class slimeIA : Enemy
         }
         else if (estadoActual == Estado.Persiguiendo) 
         {
+            /*
+            //A* global
             Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
 
             Vector3 direccion = (siguienteNodo - transform.position).normalized;
 
             velocity = direccion * maxSpeed;
+            */
+
+            Seek(playerTrn.position);
+            ObstacleAvoidance();
             
 
             //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);

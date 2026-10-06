@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 957106584214283645}
   m_Layer: 0
   m_Name: Esqueleto
-  m_TagString: Skeleton
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,16 +48,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42734cca52e3b5b4bbabdd023a4a1622, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Skeleton
+  tiempoDePersecucion: 5
+  tiempoSinVerJugador: 0
   estadoActual: 0
-  jugador: {fileID: 0}
+  noiseRadius: 5
   conoVision: {fileID: 2323088766979130444}
   velocidadRotacion: 15
+  maxSpeed: 5
+  maxForce: 0.2
+  wanderRadius: 2
+  wanderDistance: 4
+  wanderJitter: 0.5
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 8
   obstacleDistance: 6
-  maxSpeed: 5
-  maxForce: 0.2
+  emergencyDistance: 0.5
+  puntosDePatrulla: []
+  distanciaCambioPunto: 0.5
+  distanciaNodoAStar: 1
+  tiempoRecalculoAStar: 0.3
 --- !u!61 &8082351832276095782
 BoxCollider2D:
   m_ObjectHideFlags: 0

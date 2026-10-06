@@ -1,16 +1,12 @@
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class Skeleton : Enemy
+public class PruebaEnemy : Enemy
 {
     
     void Start()
     {
-        
-        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)  // Comprobacion si tiene puntos de Rutita
-            estadoActual = Estado.Patrullando;
-        else
-            estadoActual = Estado.Buscando;
+        estadoActual = Estado.Buscando;
         
         
     }
@@ -22,34 +18,6 @@ public class Skeleton : Enemy
     {
         if (estadoActual == Estado.Persiguiendo) 
         {
-            //A* global
-            //Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
-            //Vector3 direccion = (siguienteNodo - transform.position).normalized;
-            //velocity = direccion * maxSpeed;
-            Pursue(playerTrn.position);
-            ObstacleAvoidance();
-
-            
-
-            
-            
-            velocity += acceleration;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            transform.position += velocity * Time.deltaTime;
-
-            rotacionVision = velocity.normalized;
-
-            if (rotacionVision != Vector3.zero)
-            {
-                float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
-                float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
-                Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
-                conoVision.rotation = Quaternion.Slerp(
-                    conoVision.rotation, 
-                    rotacionObjetivo, 
-                    velocidadRotacion * Time.deltaTime
-                );
-            }
 
             acceleration = Vector3.zero;
 
