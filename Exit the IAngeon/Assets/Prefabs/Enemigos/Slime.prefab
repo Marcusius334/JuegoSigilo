@@ -109,7 +109,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6162294970823720618
 Transform:
   m_ObjectHideFlags: 0
@@ -138,23 +138,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ba533eee33e45643817c3e1feefab7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::slimeIA
-  tiempoDePersecucion: 5
+  tiempoDePersecucion: 7
   tiempoSinVerJugador: 0
   estadoActual: 0
   noiseRadius: 5
   conoVision: {fileID: 0}
   velocidadRotacion: 15
-  maxSpeed: 0.5
+  maxSpeed: 1.5
   maxForce: 0.2
   wanderRadius: 6
   wanderDistance: 4
   wanderJitter: 4
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   obstacleDistance: 3
   emergencyDistance: 0.5
-  radioDeteccion: 2.47
+  puntosDePatrulla: []
+  distanciaCambioPunto: 0.52
+  distanciaNodoAStar: 0.2
+  tiempoRecalculoAStar: 0.3
+  radioDeteccion: 2.54
 --- !u!114 &7257005611697658128
 MonoBehaviour:
   m_ObjectHideFlags: 0
