@@ -4,7 +4,6 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
 
-
 public class Goblin : Enemy
 {    
     [Header("Floking")]
@@ -14,13 +13,11 @@ public class Goblin : Enemy
     public float perceptionRadius = 8.0f;
     public float separationRadius = 1.0f;
 
-
     [Header("Pesos de Comportamiento")]
     public float separationWeight = 1.5f;
     public float alignmentWeight = 1.0f;
     public float cohesionWeight = 1.0f;
     public float wanderWeight = 0.5f;
-
 
     [Header("Acorralamiento")]
     private bool haVistoPersonalmenteAlJugador = false;// Indica si ESTE goblin ha visto personalmente al jugador.
@@ -34,11 +31,9 @@ public class Goblin : Enemy
     public float anguloAcorralamiento = 360f;
     public int maxGoblinsAcorralamiento = 6;
 
-
     void Start()
     {
-
-
+       
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)   //Empezara a patrullar dados los puntos en el inspector
         {
             estadoActual = Estado.Patrullando;
@@ -47,19 +42,14 @@ public class Goblin : Enemy
         {
             estadoActual = Estado.Buscando;
         }
-
-
-
-
+        
+        
         fuerzaWander = Vector3.zero;    //La fuerza a cero patatero
-
-
-
-
+       
+       
        /* estadoActual = Estado.Buscando;                Por si acaso lo comento xd!!!!
-
+        
         //se inica con un movimiento aleatorio (por ahora):
-
         float min = -10f;
         float max = 10f;
         Vector3 vectorAleatorio = new Vector3(
@@ -67,16 +57,14 @@ public class Goblin : Enemy
             Random.Range(min, max),
             0
         );
-        //velocity = vectorAleatorio.normalized * maxSpeed; para que inicien con una posicion aleatoria
+        //velocity = vectorAleatorio.normalized * maxSpeed; para que inicien con una posicion aleatoria 
         //fuerzaWander = velocity;
         fuerzaWander = Vector3.zero;*/
     }
 
-
     //===============================
     //UPDATE
     //===============================
-
     void Update()
     {
         if (estadoActual == Estado.Buscando)
@@ -87,7 +75,6 @@ public class Goblin : Enemy
         else if (estadoActual == Estado.SeguirSonido) 
         {
             if (playerTrn == null) return;
-
             Seek(playerTrn.position);
             ObstacleAvoidance();
 
@@ -99,19 +86,24 @@ public class Goblin : Enemy
         }
         else if (estadoActual == Estado.Persiguiendo)
         {
-            Vector3 siguienteNodo = ObtenerSiguienteNodoAStarGoblin(playerTrn.position);
+            //CALCULAR EL SEEK:
 
-            Vector3 direccion = (siguienteNodo - transform.position).normalized;
+            Seek(playerTrn.position);
+            ObstacleAvoidance();
 
-            velocity = direccion * maxSpeed;
-
+            //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
             velocity += acceleration;
+            //limita la velocidad actual a la velocidad máxima -> this.velocity.limit(this.maxspeed);
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
-            transform.position += velocity * Time.deltaTime;
+            //=========================================================================================
+            //APLICAR EL MOVIMIENTO:
 
+            transform.position += velocity  * Time.deltaTime;
+            //transform.position += direccion * Time.deltaTime;
+
+            //resetear la aceleracion -> this.acceleration.mult(0);
             acceleration = Vector3.zero;
-
 
             if (haVistoPersonalmenteAlJugador && playerTrn != null)
             {
@@ -126,7 +118,6 @@ public class Goblin : Enemy
                     IniciarAcorralamiento();
                 }
             }
-
 
             // =====================================================
             // CONTROL DEL TIEMPO SIN VER AL JUGADOR
@@ -148,10 +139,8 @@ public class Goblin : Enemy
             fuerzaWander = CalcularDireccionPatrulla(); // Calcula la ruta
             ObstacleAvoidance();                        // Esquiva las paredes
 
-
-
-            //CALCULAR EL FLOKING: //Solo se hace flockin g cuando patrullan juntos
-
+            
+            //CALCULAR EL FLOKING: //Solo se hace flockin g cuando patrullan juntos 
 
 
             //buscar goblins cercanos:
@@ -162,7 +151,6 @@ public class Goblin : Enemy
             Vector3 cohesion = Vector3.zero;
             Vector3 alineacion = Vector3.zero;
             Vector3 separacion = Vector3.zero;
-
 
             //procesar vecinos:
             foreach (Collider2D goblin in nearbyGoblins)
@@ -190,7 +178,6 @@ public class Goblin : Enemy
                 vecinos++;
             }
 
-
             //si tiene vecinos, se cambia su comprotamiento:
             if (vecinos > 0)
             {
@@ -202,7 +189,6 @@ public class Goblin : Enemy
                 alineacion = (alineacion / vecinos).normalized;
                 //separacion:
                 separacion = separacion.normalized;
-
 
                 //combinar las 3 fuerzas:
                 Vector3 steering = (cohesion * cohesionWeight) +
@@ -222,9 +208,7 @@ public class Goblin : Enemy
             }
 
 
-
             transform.position += velocity * Time.deltaTime;
-
         }
         else if (estadoActual == Estado.Acorralando)
         {
@@ -270,14 +254,11 @@ public class Goblin : Enemy
                 velocidadRotacion * Time.deltaTime
             );
         }
-
     }
-
 
     //===============================
     //PERDER JUGADOR
     //===============================
-
     void PerderJugador()
     {
         velocity = Vector3.zero;
@@ -290,7 +271,6 @@ public class Goblin : Enemy
         }
         else
             estadoActual = Estado.Buscando;
-
 
         haVistoPersonalmenteAlJugador = false;
         liderGoblin = null;
@@ -305,9 +285,7 @@ public class Goblin : Enemy
         // Avisamos a los goblins que estaban persiguiendo
         // porque este goblin les había avisado.
         AvisarPerdidaDelJugador();
-
     }
-
     void AvisarPerdidaDelJugador()
     {
         Collider2D[] goblinsCercanos = Physics2D.OverlapCircleAll(
@@ -331,7 +309,6 @@ public class Goblin : Enemy
             }
         }
     }
-
     void PerderPersecucionPorLider()
     {
         // Si este goblin ya había visto personalmente
@@ -345,7 +322,6 @@ public class Goblin : Enemy
         acceleration = Vector3.zero;
 
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0){
-
             EncontrarPuntoMasCercano(); //  Busca el punto mas cercano, tambien temporal hasta el Pathfollowing A*
             estadoActual = Estado.Patrullando;
         }
@@ -358,14 +334,11 @@ public class Goblin : Enemy
         tieneObjetivoAcorralamiento = false;
         tiempoSinVerJugador = 0f;
     }
-
-
-
+    
 
     //===============================
     //COMPORTAMIENTO INTELIGENTE (Acorralamiento)
     //===============================
-
     public void IniciarAcorralamiento() 
     {
         if (playerTrn == null) return;
@@ -384,18 +357,17 @@ public class Goblin : Enemy
             if (goblin == null || goblin == this) continue;
 
             goblinsDisponibles.Add(goblin);
-
         }
         // Si no hay otros Goblins, no se puede formar
         if(goblinsDisponibles.Count == 0) return;
 
-        // No utilizar más Goblins de los permitidos
+        // No utilizar más Goblins de los permitidos 
         int cantidad = Mathf.Min(
             goblinsDisponibles.Count,
             maxGoblinsAcorralamiento
         );
 
-        //Separacion entre las posiciones
+        //Separacion entre las posiciones 
         float anguloEntreGoblins = 360f / cantidad;
 
         for (int i = 0; i < cantidad; i++) 
@@ -403,17 +375,15 @@ public class Goblin : Enemy
             float angulo = i * anguloEntreGoblins;
             float radianes = angulo * Mathf.Deg2Rad;
 
-            //Posicion alrededor del jugador
+            //Posicion alrededor del jugador 
             Vector3 posicion = playerTrn.position + new Vector3(Mathf.Cos(radianes), Mathf.Sin(radianes), 0) * radioAcorralamiento;
 
-            //Mandar al Goblin a esa posicion
+            //Mandar al Goblin a esa posicion 
             goblinsDisponibles[i].IrAcorralamiento(posicion);
         }
 
-
     }
-
-    public void IrAcorralamiento(Vector3 posicion)
+    public void IrAcorralamiento(Vector3 posicion) 
     {
         objetivoAcorralamiento = posicion;
         tieneObjetivoAcorralamiento = true;
@@ -426,36 +396,23 @@ public class Goblin : Enemy
 
 
 
-
-
-
     //===============================
-    //DETECTAR PLAYER
+    //DETECTAR PLAYER 
     //===============================
-
     public void FollowMode(Transform objetivo)
     {
         Scream();
-
-        if (estadoActual != Estado.Persiguiendo)
-        {
-            ReiniciarCaminoAStar();
-        }
-
         estadoActual = Estado.Persiguiendo;
         playerTrn = objetivo;
 
-        tiempoSinVerJugador = 0f;
-
         //Los Goblins que entran en FOLLOWMODE son los que SI han visto al jugador (no los que escuchan)
         haVistoPersonalmenteAlJugador = true;
-        liderGoblin = null; //No tiene lider, él es el líder
+        liderGoblin = null; //No tiene lider, él es el líder 
         ultimoMomentoVioJugador = Time.time;  // Cada vez que realmente ve al jugador,actualizamos el momento de la última visión.
         tiempoSinVerJugador = 0f;
 
         AvisarPosicionJugador();
     }
-
     private void AvisarPosicionJugador()
     {
         if (playerTrn == null) return;
@@ -477,11 +434,9 @@ public class Goblin : Enemy
         }
     }
 
-
     //===============================
     //NOISE
     //===============================
-
     //Esta función pretende alertar a los goblins cercanos en un radio marcado en el inspector
     public void Scream()
     {
@@ -490,7 +445,6 @@ public class Goblin : Enemy
         Debug.Log("Sonido.MP5");
     }
 
-
     //Escuchar el sonido
     public override void SetNoisePosition(Transform noisePosition)
     {
@@ -498,7 +452,6 @@ public class Goblin : Enemy
 
         FollowSound(noisePosition, lider);
     }
-
 
      //Es lo mismo que FollowMode pero adaptado a escuchar el sonido
     //Se podría cambiar para usar A* tal vez
@@ -512,48 +465,12 @@ public class Goblin : Enemy
         haVistoPersonalmenteAlJugador = false;
         liderGoblin = lider; //Guardamos el Goblin que le ha avisado (lider)
         tiempoSinVerJugador = 0f;
-
+        
     }
-
-
-    private Vector3 ObtenerSiguienteNodoAStarGoblin(Vector3 objetivo)
-    {
-        temporizadorAStar -= Time.deltaTime;
-
-        if (caminoAStar == null || caminoAStar.Count == 0 || temporizadorAStar <= 0f)
-        {
-            CalcularCaminoAStar(objetivo);
-        }
-
-        if (caminoAStar == null || caminoAStar.Count == 0)
-            return transform.position;
-
-        if (indiceCaminoAStar < caminoAStar.Count)
-        {
-            float distancia = Vector2.Distance(
-                transform.position,
-                caminoAStar[indiceCaminoAStar].Posicion
-            );
-
-            if (distancia <= distanciaNodoAStar)
-            {
-                indiceCaminoAStar++;
-            }
-        }
-
-        if (indiceCaminoAStar >= caminoAStar.Count)
-        {
-            return objetivo;
-        }
-
-        return caminoAStar[indiceCaminoAStar].Posicion;
-    }
-
 
     //===============================
     //DIBUJAR EL AREA DE DETECCION DEL GOBLIN
     //===============================
-
     //para dibujar el radio del grito en el editorx
     //y lsa areas del flocking
     private void OnDrawGizmos()
@@ -569,5 +486,4 @@ public class Goblin : Enemy
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, separationRadius);
     }
-
 }
