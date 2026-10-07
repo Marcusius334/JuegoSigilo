@@ -13,12 +13,11 @@ public class Enemy : MonoBehaviour, IHearing
     protected SpriteRenderer sprite;
     public float tiempoDePersecucion = 5f;
     public float tiempoSinVerJugador;
-    public Estado estadoActual;
 
     [Header("Sound")]
     public AudioSource audioSourceMovement;
     public AudioSource audioSourceExtra;
-    public float noiseRadius = 5f;
+    public float noiseRadius = 15f;
     
     [Header("Rotation")]
     protected Vector3 rotacionVision;
@@ -28,7 +27,7 @@ public class Enemy : MonoBehaviour, IHearing
     [Header("Seek")]
     protected Vector3 velocity;
     protected Vector3 acceleration;
-    public float maxSpeed = 5f;
+    public float maxSpeed = 3f;
     public float maxForce = 0.2f;
 
     [Header("Pursue")]
@@ -54,6 +53,10 @@ public class Enemy : MonoBehaviour, IHearing
     public Transform[] puntosDePatrulla;
     protected int indicePatrulla = 0;
     public float distanciaCambioPunto = 0.5f;
+
+    [Header("State Machine")]
+    [SerializeField] protected StateMachine maquinaEstados;
+    public Estado EstadoActual => maquinaEstados.EstadoActual;
 
     //===============================
     // A*
@@ -90,6 +93,8 @@ public class Enemy : MonoBehaviour, IHearing
         playerTrn = player.GetComponent<Transform>();
         sprite = GetComponentInChildren<SpriteRenderer>();
 
+        maquinaEstados = GetComponent<StateMachine>();
+
         //Preparación para el seek
         velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
         acceleration = Vector3.zero; //this.acceleration = createVector(0, 0);
@@ -109,7 +114,19 @@ public class Enemy : MonoBehaviour, IHearing
         avoidanceSide = 0;//Cosa de obstacle
 
         pathfinding = FindFirstObjectByType<AStarPathfinding>();
-    }  
+    }
+    //===============================
+    // MAQUINA DE ESTADOS   
+    //===============================
+    protected void InicializarMaquinaEstados(Estado estadoInicial) 
+    {
+        //Esta función solo sirve para inicializar la Maquina
+            maquinaEstados.Inicializar(estadoInicial);
+    }
+    protected void CambiarEstado(Estado nuevoEstado) 
+    {
+            maquinaEstados.CambiarEstado(nuevoEstado);
+    }
 
     //===============================
     //ESCUCHAR EL SONIDO

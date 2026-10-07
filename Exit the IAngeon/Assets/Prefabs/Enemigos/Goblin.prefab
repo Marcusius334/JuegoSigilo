@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 52591798521386637}
   - component: {fileID: 2010702410293051545}
   - component: {fileID: 8212765768193918906}
+  - component: {fileID: 1477027903018965348}
   m_Layer: 6
   m_Name: Goblin
   m_TagString: Enemy
@@ -144,13 +145,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Goblin
   tiempoDePersecucion: 8
   tiempoSinVerJugador: 0
-  estadoActual: 0
   audioSourceMovement: {fileID: 8212765768193918906}
   audioSourceExtra: {fileID: 4494009815528450329}
-  noiseRadius: 5
+  noiseRadius: 20
   conoVision: {fileID: 1165183468609665712}
   velocidadRotacion: 15
-  maxSpeed: 5
+  maxSpeed: 3
   maxForce: 0.2
   wanderRadius: 2
   wanderDistance: 4
@@ -162,6 +162,7 @@ MonoBehaviour:
   emergencyDistance: 0.5
   puntosDePatrulla: []
   distanciaCambioPunto: 0.5
+  maquinaEstados: {fileID: 0}
   distanciaNodoAStar: 1
   tiempoRecalculoAStar: 0.3
   GoblinLayer:
@@ -457,6 +458,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1477027903018965348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5484422226520011060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4fe36655e220aa40a884d29d3298411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StateMachine
+  owner: {fileID: 0}
 --- !u!1001 &3842069453022832600
 PrefabInstance:
   m_ObjectHideFlags: 0

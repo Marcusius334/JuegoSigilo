@@ -3,13 +3,14 @@ using UnityEngine;
 public class slimeIA : Enemy
 {
     private Estado estadoAnterior;
+
     [Header("Deteccion")]//Provisional
     public float radioDeteccion = 2f;
     
     void Start()
     {
-        estadoActual = Estado.Buscando;
-        estadoAnterior = estadoActual;
+        InicializarMaquinaEstados(Estado.Buscando);
+        estadoAnterior = EstadoActual;
     }
 
     //===============================
@@ -17,16 +18,16 @@ public class slimeIA : Enemy
     //===============================
     void Update()
     {
-        if (estadoActual != estadoAnterior)
+        if (EstadoActual != estadoAnterior)
         {
-            if (estadoActual == Estado.Persiguiendo)
+            if (EstadoActual == Estado.Persiguiendo)
             {
                 ReiniciarCaminoAStar();
             }
 
-            estadoAnterior = estadoActual;
+            estadoAnterior = EstadoActual;
         }
-        if (estadoActual == Estado.Buscando)
+        if (EstadoActual == Estado.Buscando)
         {
             // Aplicamos la variación de dirección ligera del Wander
             ApplyWanderDirect();
@@ -36,7 +37,7 @@ public class slimeIA : Enemy
             // Movimiento a VELOCIDAD CONSTANTE
             transform.Translate(moveDirection * maxSpeed * Time.deltaTime, Space.World);
         }
-        else if (estadoActual == Estado.Persiguiendo) 
+        else if (EstadoActual == Estado.Persiguiendo) 
         {
             /*
             //A* global
@@ -67,14 +68,14 @@ public class slimeIA : Enemy
             tiempoSinVerJugador += Time.deltaTime;
             if (tiempoSinVerJugador >= tiempoDePersecucion)
             {
-                estadoActual = Estado.Buscando;
-                Debug.Log("Mucho tiempo sin ver al jugador, Estado: BUSCANDO");
+                InicializarMaquinaEstados(Estado.Buscando);
+                //Debug.Log("Mucho tiempo sin ver al jugador, Estado: BUSCANDO");
                 velocity = Vector3.zero;//Pasan cosas de buscar
             }
         }
 
         //Esto es para que el sprite flippee en direccion a donde mira
-        if (estadoActual == Estado.Persiguiendo)
+        if (EstadoActual == Estado.Persiguiendo)
         {
             if (velocity.x < 0)
                 sprite.flipX = true;
@@ -90,6 +91,11 @@ public class slimeIA : Enemy
         }
     }
 
+    public void HearNoise(Transform noisePosition) 
+    {
+        tiempoSinVerJugador = 0f;
+        CambiarEstado(Estado.Persiguiendo);
+    }
     
     //===============================
     //DIBUJAR EL AREA DE DETECCION DEL SLIME

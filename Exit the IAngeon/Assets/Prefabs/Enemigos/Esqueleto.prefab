@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8082351832276095782}
   - component: {fileID: 957106584214283645}
   - component: {fileID: 6836474177980714847}
+  - component: {fileID: 1434600230967659930}
   m_Layer: 0
   m_Name: Esqueleto
   m_TagString: Enemy
@@ -241,6 +242,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1434600230967659930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155499436406140173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4fe36655e220aa40a884d29d3298411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StateMachine
+  owner: {fileID: 0}
 --- !u!1 &3354864851189939034
 GameObject:
   m_ObjectHideFlags: 0
