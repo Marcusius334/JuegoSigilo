@@ -440,7 +440,7 @@ public class Goblin : Enemy
     //Esta función pretende alertar a los goblins cercanos en un radio marcado en el inspector
     public void Scream()
     {
-        audioSource.Play();
+        audioSourceExtra.Play();
         NoiseManager.MakeNoise(transform, noiseRadius);
         Debug.Log("Sonido.MP5");
     }

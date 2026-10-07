@@ -13,6 +13,7 @@ public class Key : MonoBehaviour
             if (player != null)
             {
                 player.hasKey = true; // Esto es para marcar que el jugador ha pillao la llave
+                player.GetKey();
             }
             Destroy(gameObject);
         }

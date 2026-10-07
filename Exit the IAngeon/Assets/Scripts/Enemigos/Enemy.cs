@@ -16,7 +16,8 @@ public class Enemy : MonoBehaviour, IHearing
     public Estado estadoActual;
 
     [Header("Sound")]
-    protected AudioSource audioSource;
+    public AudioSource audioSourceMovement;
+    public AudioSource audioSourceExtra;
     public float noiseRadius = 5f;
     
     [Header("Rotation")]
@@ -88,9 +89,6 @@ public class Enemy : MonoBehaviour, IHearing
         playerScr = player.GetComponent<Player>();
         playerTrn = player.GetComponent<Transform>();
         sprite = GetComponentInChildren<SpriteRenderer>();
-
-        //Preparación audio
-        audioSource = GetComponent<AudioSource>();
 
         //Preparación para el seek
         velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);

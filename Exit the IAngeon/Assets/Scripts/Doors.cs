@@ -40,5 +40,8 @@ public class Door : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
         player.transform.position = exitPoint.position;
+
+        Player playerScr = player.GetComponent<Player>();
+        playerScr.OpenDoor();
     }
 }
