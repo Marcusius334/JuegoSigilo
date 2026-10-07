@@ -104,13 +104,14 @@ GameObject:
   - component: {fileID: 7257005611697658128}
   - component: {fileID: 4718347792659879449}
   - component: {fileID: 7544846537854139553}
+  - component: {fileID: 7358385671760959934}
   m_Layer: 0
   m_Name: Slime
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6162294970823720618
 Transform:
   m_ObjectHideFlags: 0
@@ -141,7 +142,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::slimeIA
   tiempoDePersecucion: 7
   tiempoSinVerJugador: 0
-  estadoActual: 0
   audioSourceMovement: {fileID: 7544846537854139553}
   audioSourceExtra: {fileID: 0}
   noiseRadius: 5
@@ -159,6 +159,7 @@ MonoBehaviour:
   emergencyDistance: 0.5
   puntosDePatrulla: []
   distanciaCambioPunto: 0.52
+  maquinaEstados: {fileID: 0}
   distanciaNodoAStar: 0.2
   tiempoRecalculoAStar: 0.3
   radioDeteccion: 2.54
@@ -308,3 +309,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7358385671760959934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5142378244692130854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4fe36655e220aa40a884d29d3298411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StateMachine
+  owner: {fileID: 0}

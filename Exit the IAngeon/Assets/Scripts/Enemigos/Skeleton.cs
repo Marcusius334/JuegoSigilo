@@ -6,11 +6,11 @@ public class Skeleton : Enemy
     
     void Start()
     {
-        
+
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)  // Comprobacion si tiene puntos de Rutita
-            estadoActual = Estado.Patrullando;
+            InicializarMaquinaEstados(Estado.Patrullando);
         else
-            estadoActual = Estado.Buscando;
+            InicializarMaquinaEstados(Estado.Buscando);
         
         
     }
@@ -20,7 +20,7 @@ public class Skeleton : Enemy
     //===============================
     void Update()
     {
-        if (estadoActual == Estado.Persiguiendo) 
+        if (EstadoActual == Estado.Persiguiendo) 
         {
             //A* global
             //Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
@@ -57,7 +57,8 @@ public class Skeleton : Enemy
 
             if (tiempoSinVerJugador >= tiempoDePersecucion)
             {
-                estadoActual = Estado.Buscando;
+                CambiarEstado(Estado.Buscando);
+
                 tiempoSinVerJugador = 0f;
                 velocity = Vector3.zero;
                 ReiniciarCaminoAStar();
@@ -65,7 +66,7 @@ public class Skeleton : Enemy
                 Debug.Log("Skeleton ha perdido al jugador");
             }
         }
-        else if (estadoActual == Estado.Patrullando)
+        else if (EstadoActual == Estado.Patrullando)
         {
             Vector3 direccionRuta = CalcularDireccionPatrulla();
             velocity = Vector3.Lerp(velocity, direccionRuta, Time.deltaTime * 2f);
@@ -109,11 +110,13 @@ public class Skeleton : Enemy
     //===============================
     public void FollowMode(Transform objetivo)
     {
-        estadoActual = Estado.Persiguiendo;
+        
         playerTrn = objetivo;
 
         tiempoSinVerJugador = 0f;
         ReiniciarCaminoAStar();
+
+        CambiarEstado(Estado.Persiguiendo);
 
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
     }
@@ -123,7 +126,7 @@ public class Skeleton : Enemy
     //===============================
     public bool EstaPersiguiendo()
     {
-        return estadoActual == Estado.Persiguiendo;
+        return EstadoActual == Estado.Persiguiendo;
     }
     public Transform PlayerTransform()//para que lo de la vision hitbox vaya bien
     {

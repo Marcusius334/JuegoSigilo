@@ -32,10 +32,7 @@ public class EnemyHearing : MonoBehaviour
 
         if (slimeia != null)
         {
-            slimeia.estadoActual = slimeIA.Estado.Persiguiendo;
-            slimeia.tiempoSinVerJugador = 0f;
-
-            Debug.Log("Slime → PERSIGUIENDO");
+            slimeia.HearNoise(noisePosition);
         }
 
         if (hearingScript != null)
