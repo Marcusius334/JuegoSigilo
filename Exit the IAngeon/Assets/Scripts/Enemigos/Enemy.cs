@@ -66,6 +66,9 @@ public class Enemy : MonoBehaviour, IHearing
     protected List<AStarNode> caminoAStar;
     protected int indiceCaminoAStar;
 
+    protected Vector3 posicionSonido;
+    protected bool tienePosicionSonido = false;
+
     [SerializeField] protected float distanciaNodoAStar = 1f;
     [SerializeField] protected float tiempoRecalculoAStar = 0.3f;
 
@@ -131,10 +134,21 @@ public class Enemy : MonoBehaviour, IHearing
     //===============================
     //ESCUCHAR EL SONIDO
     //===============================
+    
     public virtual void SetNoisePosition(Transform noisePosition)
     {
-        //Cada uno overwritea y lo adapta a su escucha
+        posicionSonido = noisePosition.position;
+        tienePosicionSonido = true;
+
+        // Si ya persigue al jugador, no interrumpir la persecución.
+        // Guardamos el ruido para investigarlo después.
+        if (EstadoActual == Estado.Persiguiendo)
+            return;
+
+        ReiniciarCaminoAStar();
+        CambiarEstado(Estado.SeguirSonido);
     }
+
 
     //===============================
     //APPLY FORCE

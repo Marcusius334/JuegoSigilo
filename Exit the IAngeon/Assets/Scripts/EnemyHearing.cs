@@ -34,8 +34,7 @@ public class EnemyHearing : MonoBehaviour
         {
             slimeia.HearNoise(noisePosition);
         }
-
-        if (hearingScript != null)
+        else if (hearingScript != null)
         {
             hearingScript.SetNoisePosition(noisePosition);
         }

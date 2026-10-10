@@ -22,16 +22,10 @@ public class Skeleton : Enemy
     {
         if (EstadoActual == Estado.Persiguiendo) 
         {
-            //A* global
-            //Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
-            //Vector3 direccion = (siguienteNodo - transform.position).normalized;
-            //velocity = direccion * maxSpeed;
+            
             Pursue(playerTrn.position);
             ObstacleAvoidance();
 
-            
-
-            
             
             velocity += acceleration;
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
@@ -57,13 +51,45 @@ public class Skeleton : Enemy
 
             if (tiempoSinVerJugador >= tiempoDePersecucion)
             {
-                CambiarEstado(Estado.Buscando);
-
                 tiempoSinVerJugador = 0f;
                 velocity = Vector3.zero;
                 ReiniciarCaminoAStar();
 
+                if (tienePosicionSonido)
+                {
+                    CambiarEstado(Estado.SeguirSonido);
+                }
+                else
+                {
+                    CambiarEstado(Estado.Buscando);
+                }
+
                 Debug.Log("Skeleton ha perdido al jugador");
+            }
+        }
+        else if (EstadoActual == Estado.SeguirSonido)
+        {
+            if (tienePosicionSonido)
+            {
+                Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+                Vector3 direccion = (siguienteNodo - transform.position).normalized;
+
+                velocity = direccion * maxSpeed;
+                ObstacleAvoidance();
+
+                velocity += acceleration;
+                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+                transform.position += velocity * Time.deltaTime;
+
+                acceleration = Vector3.zero;
+
+                if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
+                {
+                    tienePosicionSonido = false;
+                    CambiarEstado(Estado.Buscando);
+                    ReiniciarCaminoAStar();
+                    velocity = Vector3.zero;
+                }
             }
         }
         else if (EstadoActual == Estado.Patrullando)
@@ -108,18 +134,19 @@ public class Skeleton : Enemy
     //===============================
     //FOLLOW MODE
     //===============================
+    
     public void FollowMode(Transform objetivo)
     {
-        
         playerTrn = objetivo;
-
         tiempoSinVerJugador = 0f;
-        ReiniciarCaminoAStar();
+        firstPursue = true;
 
+        ReiniciarCaminoAStar();
         CambiarEstado(Estado.Persiguiendo);
 
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
     }
+
 
     //===============================
     //COSAS VISION HITBOX

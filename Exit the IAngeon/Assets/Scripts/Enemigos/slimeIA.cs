@@ -37,16 +37,32 @@ public class slimeIA : Enemy
             // Movimiento a VELOCIDAD CONSTANTE
             transform.Translate(moveDirection * maxSpeed * Time.deltaTime, Space.World);
         }
+        else if (EstadoActual == Estado.SeguirSonido)
+        {
+            if (tienePosicionSonido)
+            {
+                Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+                Vector3 direccion = (siguienteNodo - transform.position).normalized;
+
+                velocity = direccion * maxSpeed;
+                ObstacleAvoidance();
+
+                velocity += acceleration;
+                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+                transform.position += velocity * Time.deltaTime;
+
+                acceleration = Vector3.zero;
+
+                if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
+                {
+                    CambiarEstado(Estado.Buscando);
+                    ReiniciarCaminoAStar();
+                    velocity = Vector3.zero;
+                }
+            }
+        }
         else if (EstadoActual == Estado.Persiguiendo) 
         {
-            /*
-            //A* global
-            Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(playerTrn.position);
-
-            Vector3 direccion = (siguienteNodo - transform.position).normalized;
-
-            velocity = direccion * maxSpeed;
-            */
 
             Seek(playerTrn.position);
             ObstacleAvoidance();
@@ -91,10 +107,25 @@ public class slimeIA : Enemy
         }
     }
 
-    public void HearNoise(Transform noisePosition) 
+    public void HearNoise(Transform noisePosition)
     {
+        float distancia = Vector3.Distance(transform.position, noisePosition.position);
+
         tiempoSinVerJugador = 0f;
-        CambiarEstado(Estado.Persiguiendo);
+
+        if (distancia <= radioDeteccion)
+        {
+            playerTrn = noisePosition;
+            CambiarEstado(Estado.Persiguiendo);
+        }
+        else
+        {
+            posicionSonido = noisePosition.position;
+            tienePosicionSonido = true;
+
+            ReiniciarCaminoAStar();
+            CambiarEstado(Estado.SeguirSonido);
+        }
     }
     
     //===============================
