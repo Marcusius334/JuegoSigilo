@@ -135,19 +135,29 @@ public class Enemy : MonoBehaviour, IHearing
     //ESCUCHAR EL SONIDO
     //===============================
     
+    
+    
     public virtual void SetNoisePosition(Transform noisePosition)
     {
+        if (noisePosition == null)
+            return;
+
         posicionSonido = noisePosition.position;
         tienePosicionSonido = true;
 
-        // Si ya persigue al jugador, no interrumpir la persecución.
-        // Guardamos el ruido para investigarlo después.
+        Debug.Log("Enemy: ruido recibido en " + posicionSonido);
+        Debug.Log("Enemy: estado actual = " + EstadoActual);
+
         if (EstadoActual == Estado.Persiguiendo)
             return;
 
         ReiniciarCaminoAStar();
         CambiarEstado(Estado.SeguirSonido);
+
+        Debug.Log("Enemy: estado después del cambio = " + EstadoActual);
     }
+
+
 
 
     //===============================

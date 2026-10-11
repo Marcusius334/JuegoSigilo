@@ -9,6 +9,7 @@ public class EnemyHearing : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("EnemyHearing iniciado en: " + gameObject.name);
         hearingScript = GetComponent<IHearing>();
 
         Debug.Log("ENEMY HEARING: AWAKE");
@@ -24,6 +25,7 @@ public class EnemyHearing : MonoBehaviour
     public void HearNoise(Transform noisePosition, bool isRunning)
     {
         // Si está andando y este enemigo no puede escuchar pasos normales, ignoramos el ruido
+        Debug.Log("EnemyHearing.HearNoise ejecutado en: " + gameObject.name);
         if (!isRunning && !hearsWalking)
             return;
 
@@ -37,6 +39,11 @@ public class EnemyHearing : MonoBehaviour
         else if (hearingScript != null)
         {
             hearingScript.SetNoisePosition(noisePosition);
+            Debug.Log("EnemyHearing: enviando ruido a SetNoisePosition()");
         }
+        Debug.Log("EnemyHearing: " + gameObject.name +
+          " ha recibido el ruido. Corriendo: " + isRunning);
+
+        Debug.Log("EnemyHearing: ¿Es slime? " + (slimeia != null));
     }
 }
