@@ -50,6 +50,7 @@ public class StateMachine : MonoBehaviour
                 Debug.Log(owner.name + " entra en SEGUIR SONIDO");
                 break;
             case Enemy.Estado.Persiguiendo:
+                owner.PlayAlert();
                 Debug.Log(owner.name + " entra en PERSIGUIENDO");
                 break;
 

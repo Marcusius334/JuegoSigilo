@@ -515,7 +515,7 @@ public class Goblin : Enemy
     {
         audioSourceExtra.Play();
         NoiseManager.MakeNoise(transform, noiseRadius);
-        Debug.Log("Sonido.MP5");
+        Debug.Log("Scream");
     }
 
     //Escuchar el sonido

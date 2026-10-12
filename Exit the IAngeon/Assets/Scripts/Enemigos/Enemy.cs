@@ -7,28 +7,29 @@ public class Enemy : MonoBehaviour, IHearing
     //VARIABLES SEPARADAS EN HEADERS PARA QUE VAYA BIEN
     //===============================
     [Header("Generic")]
+    public float tiempoDePersecucion = 5f;
+    public float tiempoSinVerJugador;
     protected GameObject player;
     protected Transform playerTrn;
     protected Player playerScr;
     protected SpriteRenderer sprite;
-    public float tiempoDePersecucion = 5f;
-    public float tiempoSinVerJugador;
-
+    
     [Header("Sound")]
     public AudioSource audioSourceMovement;
+    public AudioSource audioSourceAlert;
     public AudioSource audioSourceExtra;
     public float noiseRadius = 15f;
     
     [Header("Rotation")]
-    protected Vector3 rotacionVision;
     public Transform conoVision;
     public float velocidadRotacion = 15f;
-
+    protected Vector3 rotacionVision;
+    
     [Header("Seek")]
-    protected Vector3 velocity;
-    protected Vector3 acceleration;
     public float maxSpeed = 3f;
     public float maxForce = 0.2f;
+    protected Vector3 velocity;
+    protected Vector3 acceleration;
 
     [Header("Pursue")]
     protected Vector3 positionAnteriorPlayer;
@@ -37,17 +38,18 @@ public class Enemy : MonoBehaviour, IHearing
     protected float playerRunSpeed;
 
     [Header("Wander")]
-    protected Vector2 wanderTarget;
-    protected Vector2 moveDirection;
     public float wanderRadius = 2.0f;
     public float wanderDistance = 4.0f;
     public float wanderJitter = 0.5f;
+    protected Vector2 wanderTarget;
+    protected Vector2 moveDirection;
 
     [Header("Obstacle avoidance")]
-    protected int avoidanceSide;
     public LayerMask obstacleLayer;
     public float obstacleDistance = 3f;
     public float emergencyDistance = 0.5f;
+    protected int avoidanceSide;
+    
 
     [Header("Patrulla (Waypoints)")]
     public Transform[] puntosDePatrulla;
@@ -469,6 +471,10 @@ public class Enemy : MonoBehaviour, IHearing
     {
         caminoAStar = null;
         indiceCaminoAStar = 0;
+    }
+
+    public void PlayAlert(){
+        audioSourceAlert.Play();
     }
 
 }
