@@ -68,6 +68,9 @@ public class Enemy : MonoBehaviour, IHearing
     protected List<AStarNode> caminoAStar;
     protected int indiceCaminoAStar;
 
+    protected Vector3 posicionSonido;
+    protected bool tienePosicionSonido = false;
+
     [SerializeField] protected float distanciaNodoAStar = 1f;
     [SerializeField] protected float tiempoRecalculoAStar = 0.3f;
 
@@ -133,10 +136,31 @@ public class Enemy : MonoBehaviour, IHearing
     //===============================
     //ESCUCHAR EL SONIDO
     //===============================
+    
+    
+    
     public virtual void SetNoisePosition(Transform noisePosition)
     {
-        //Cada uno overwritea y lo adapta a su escucha
+        if (noisePosition == null)
+            return;
+
+        posicionSonido = noisePosition.position;
+        tienePosicionSonido = true;
+
+        Debug.Log("Enemy: ruido recibido en " + posicionSonido);
+        Debug.Log("Enemy: estado actual = " + EstadoActual);
+
+        if (EstadoActual == Estado.Persiguiendo)
+            return;
+
+        ReiniciarCaminoAStar();
+        CambiarEstado(Estado.SeguirSonido);
+
+        Debug.Log("Enemy: estado después del cambio = " + EstadoActual);
     }
+
+
+
 
     //===============================
     //APPLY FORCE

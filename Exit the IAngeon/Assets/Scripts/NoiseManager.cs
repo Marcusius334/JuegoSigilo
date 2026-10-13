@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public static class NoiseManager
@@ -11,11 +12,18 @@ public static class NoiseManager
     // Para los sonidos del jugador
     public static void MakeNoise(Transform position, float radius, bool isRunning)
     {
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(position.position, radius);
+        if (position == null)
+            return;
+
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(
+            position.position,
+            radius
+        );
 
         foreach (Collider2D enemy in enemies)
         {
-            EnemyHearing hearing = enemy.GetComponentInParent<EnemyHearing>();
+            EnemyHearing hearing =
+                enemy.GetComponentInParent<EnemyHearing>();
 
             if (hearing != null)
             {

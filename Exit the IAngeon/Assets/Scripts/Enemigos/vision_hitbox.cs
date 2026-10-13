@@ -45,7 +45,7 @@ public class vision_hitbox : MonoBehaviour
             {
                 //Debug.Log("No hay ningún muro. ¡Jugador detectado!");
                 if (goblin != null) goblin.FollowMode(other.transform);
-                else skeleton.FollowMode(other.transform);
+                else if(skeleton != null)skeleton.FollowMode(other.transform);
             }
             else
             {

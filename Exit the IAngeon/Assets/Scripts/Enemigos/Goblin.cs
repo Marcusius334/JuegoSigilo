@@ -72,17 +72,49 @@ public class Goblin : Enemy
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
         }
-        else if (EstadoActual == Estado.SeguirSonido) 
+        else if (EstadoActual == Estado.SeguirSonido)
         {
-            if (playerTrn == null) return;
-            Seek(playerTrn.position);
-            ObstacleAvoidance();
+            if (tienePosicionSonido)
+            {
+                Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+                Vector3 direccion = (siguienteNodo - transform.position).normalized;
 
-            velocity += acceleration;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+                velocity = direccion * maxSpeed;
 
-            transform.position += velocity * Time.deltaTime;
-            acceleration = Vector3.zero;
+                ObstacleAvoidance();
+                velocity += acceleration;
+                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+                transform.position += velocity * Time.deltaTime;
+                acceleration = Vector3.zero;
+
+                // Si ha llegado a la posición del sonido, vuelve a buscar.
+                if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
+                {
+                    tienePosicionSonido = false;
+                    playerTrn = null;
+
+                    ReiniciarCaminoAStar();
+                    velocity = Vector3.zero;
+                    acceleration = Vector3.zero;
+
+                    if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)
+                    {
+                        EncontrarPuntoMasCercano();
+                        CambiarEstado(Estado.Patrullando);
+                    }
+                    else
+                    {
+                        CambiarEstado(Estado.Buscando);
+                    }
+                }
+            }
+            else
+            {
+                ReiniciarCaminoAStar();
+                velocity = Vector3.zero;
+                CambiarEstado(Estado.Buscando);
+            }
         }
         else if (EstadoActual == Estado.Persiguiendo)
         {
@@ -521,27 +553,34 @@ public class Goblin : Enemy
     //Escuchar el sonido
     public override void SetNoisePosition(Transform noisePosition)
     {
+        if (noisePosition == null)
+            return;
+
         Goblin lider = noisePosition.GetComponent<Goblin>();
+
         if (lider != null)
             FollowSound(lider.PlayerTransform(), lider);
         else
-            FollowSound(noisePosition, lider);
+            FollowSound(noisePosition, null);
     }
 
      //Es lo mismo que FollowMode pero adaptado a escuchar el sonido
     //Se podría cambiar para usar A* tal vez
     public void FollowSound(Transform objetivo, Goblin lider)
     {
-        if (haVistoPersonalmenteAlJugador)
+        if (haVistoPersonalmenteAlJugador || objetivo== null)
             return;
         //Vector2 sonido = objetivo; //^^Same^^^^^^
         //Todo lo de abajo es simplemente para probar que funciona, cuando lo del sonido se cambia
         playerTrn = objetivo;
+        posicionSonido = objetivo.position;
+        tienePosicionSonido = true;
 
         haVistoPersonalmenteAlJugador = false;
         liderGoblin = lider; //Guardamos el Goblin que le ha avisado (lider)
         tiempoSinVerJugador = 0f;
 
+        ReiniciarCaminoAStar();
         CambiarEstado(Estado.SeguirSonido);
     }
 

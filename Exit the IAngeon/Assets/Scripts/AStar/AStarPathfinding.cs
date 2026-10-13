@@ -21,16 +21,16 @@ public class AStarPathfinding : MonoBehaviour
         AStarNode nodoInicio = ObtenerNodoMasCercano(inicio);
         AStarNode nodoObjetivo = ObtenerNodoMasCercano(objetivo);
 
-        Debug.Log(
-    "Nodo inicio: " + nodoInicio.name +
-    " | Nodo objetivo: " + nodoObjetivo.name
-);
-
         if (nodoInicio == null || nodoObjetivo == null)
         {
             Debug.LogWarning("No se ha podido encontrar un nodo de inicio u objetivo.");
             return null;
         }
+
+        Debug.Log(
+            "Nodo inicio: " + nodoInicio.name +
+            " | Nodo objetivo: " + nodoObjetivo.name
+        );
 
         List<AStarNode> abiertos = new List<AStarNode>();
         HashSet<AStarNode> cerrados = new HashSet<AStarNode>();
