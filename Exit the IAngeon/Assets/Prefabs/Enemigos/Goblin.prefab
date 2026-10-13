@@ -149,7 +149,7 @@ MonoBehaviour:
   audioSourceMovement: {fileID: 8212765768193918906}
   audioSourceAlert: {fileID: 7059332597139609668}
   audioSourceExtra: {fileID: 4494009815528450329}
-  noiseRadius: 20
+  noiseRadius: 10
   conoVision: {fileID: 1165183468609665712}
   velocidadRotacion: 15
   maxSpeed: 3
@@ -160,7 +160,7 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 8
-  obstacleDistance: 3
+  obstacleDistance: 1.5
   emergencyDistance: 0.5
   puntosDePatrulla: []
   distanciaCambioPunto: 0.5

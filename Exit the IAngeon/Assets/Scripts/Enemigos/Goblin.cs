@@ -77,9 +77,12 @@ public class Goblin : Enemy
             if (tienePosicionSonido)
             {
                 Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+                Seek(siguienteNodo);
+                /*
                 Vector3 direccion = (siguienteNodo - transform.position).normalized;
 
                 velocity = direccion * maxSpeed;
+                */
 
                 ObstacleAvoidance();
                 velocity += acceleration;

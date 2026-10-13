@@ -225,3 +225,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   goblin: {fileID: 0}
+  skeleton: {fileID: 0}
+  enemy: {fileID: 0}
