@@ -32,10 +32,19 @@ public class slimeIA : Enemy
             // Aplicamos la variación de dirección ligera del Wander
             ApplyWanderDirect();
 
-            ObstacleAvoidance();
+            // Convertimos esa dirección deseada en una fuerza de dirección (Steering)
+            Vector3 desired = (Vector3)moveDirection * maxSpeed;
+            Vector3 steer = desired - velocity;
+            steer = Vector3.ClampMagnitude(steer, maxForce);
+            applyForce(steer);
 
-            // Movimiento a VELOCIDAD CONSTANTE
-            transform.Translate(moveDirection * maxSpeed * Time.deltaTime, Space.World);
+            if (velocity.magnitude < 0.01f && moveDirection != Vector2.zero)
+            {
+                velocity = (Vector3)moveDirection * 0.1f;
+            }
+
+            // 3. Calculamos la esquiva de obstáculos sobre la misma acumulación de fuerzas
+            ObstacleAvoidance();
         }
         else if (EstadoActual == Estado.SeguirSonido)
         {
@@ -90,20 +99,19 @@ public class slimeIA : Enemy
             }
         }
 
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        // Mover la posición según la velocidad calculada
+        transform.position += velocity * Time.deltaTime;
+
+        // Resetear la aceleración para el siguiente frame
+        acceleration = Vector3.zero;
+
         //Esto es para que el sprite flippee en direccion a donde mira
-        if (EstadoActual == Estado.Persiguiendo)
+        if (velocity.magnitude > 0f)
         {
-            if (velocity.x < 0)
-                sprite.flipX = true;
-            else 
-                sprite.flipX = false;
-        }
-        else
-        {
-            if (moveDirection.x < 0)
-                sprite.flipX = true;
-            else
-                sprite.flipX = false;
+            sprite.flipX = velocity.x < 0;
         }
     }
 
