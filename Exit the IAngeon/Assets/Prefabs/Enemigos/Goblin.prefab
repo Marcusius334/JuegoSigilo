@@ -170,7 +170,7 @@ MonoBehaviour:
   GoblinLayer:
     serializedVersion: 2
     m_Bits: 64
-  perceptionRadius: 30
+  perceptionRadius: 10
   separationRadius: 0.6
   separationWeight: 1.5
   alignmentWeight: 5
