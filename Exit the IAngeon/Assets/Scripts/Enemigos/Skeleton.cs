@@ -7,174 +7,180 @@ public class Skeleton : Enemy
     void Start()
     {
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)
-            InicializarMaquinaEstados(Estado.Patrullando);
+            InicializarMaquinaEstados<PatrullandoState>();
         else
-            InicializarMaquinaEstados(Estado.Buscando);
+            InicializarMaquinaEstados<BuscandoState>();
     }
 
     void Update()
     {
-        if (EstadoActual == Estado.Persiguiendo)
+        if (maquinaEstados == null)
+            return;
+
+        maquinaEstados.ActualizarEstado();
+
+        // Orientar el cono de visión según el movimiento.
+        ActualizarRotacionVision();
+    }
+
+
+    // =========================================
+    // ESTADO: BUSCANDO
+    // =========================================
+    public override void EjecutarBuscando()
+    {
+        firstPursue = true;
+
+        velocity = Vector3.zero;
+        acceleration = Vector3.zero;
+    }
+
+    // =========================================
+    // ESTADO: PATRULLANDO
+    // =========================================
+    public override void EjecutarPatrulla()
+    {
+        Vector3 direccionRuta = CalcularDireccionPatrulla();
+
+        velocity = Vector3.Lerp(
+            velocity,
+            direccionRuta,
+            Time.deltaTime * 2f
+        );
+
+        ObstacleAvoidance();
+
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        transform.position += velocity * Time.deltaTime;
+
+        acceleration = Vector3.zero;
+
+        firstPursue = true;
+    }
+
+    // =========================================
+    // ESTADO: PERSIGUIENDO
+    // =========================================
+    public override void EjecutarPersecucion()
+    {
+        if (playerTrn == null)
         {
-            if (playerTrn == null)
-            {
-                if (tienePosicionSonido)
-                    CambiarEstado(Estado.SeguirSonido);
-                else
-                    CambiarEstado(Estado.Buscando);
 
-                velocity = Vector3.zero;
-                return;
-            }
-
-            Pursue(playerTrn.position);
-            ObstacleAvoidance();
-
-            velocity += acceleration;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            transform.position += velocity * Time.deltaTime;
-
-            //Rotación del cono de visión
-            rotacionVision = velocity.normalized;
-
-            if (rotacionVision != Vector3.zero && conoVision != null)
-            {
-                float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
-                float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
-                Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
-
-                conoVision.rotation = Quaternion.Slerp(
-                    conoVision.rotation,
-                    rotacionObjetivo,
-                    velocidadRotacion * Time.deltaTime
-                );
-            }
-
-            acceleration = Vector3.zero;
-            tiempoSinVerJugador += Time.deltaTime;
-
-            if (tiempoSinVerJugador >= tiempoDePersecucion)
-            {
-                tiempoSinVerJugador = 0f;
-                velocity = Vector3.zero;
-                ReiniciarCaminoAStar();
-
-                // Si ha perdido de vista al jugador, investiga el último sonido.
-                if (tienePosicionSonido)
-                {
-                    CambiarEstado(Estado.SeguirSonido);
-                }
-                else
-                {
-                    CambiarEstado(Estado.Buscando);
-                }
-
-                Debug.Log("Skeleton ha perdido al jugador");
-            }
-        }
-        else if (EstadoActual == Estado.SeguirSonido)
-        {
-            // Seguir el camino calculado mediante A*
             if (tienePosicionSonido)
             {
-                Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
-                Seek(siguienteNodo);
-                /*
-                Vector3 direccion = (siguienteNodo - transform.position).normalized;
-
-                velocity = direccion * maxSpeed;
-                */
-
-                ObstacleAvoidance();
-
-                velocity += acceleration;
-                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-                transform.position += velocity * Time.deltaTime;
-
-                rotacionVision = velocity.normalized;
-
-                if (rotacionVision != Vector3.zero && conoVision != null)
-                {
-                    float anguloRadianes = Mathf.Atan2(
-                        rotacionVision.y,
-                        rotacionVision.x
-                    );
-
-                    float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
-
-                    Quaternion rotacionObjetivo = Quaternion.Euler(
-                        0f, 0f, anguloGrados
-                    );
-
-                    conoVision.rotation = Quaternion.Slerp(
-                        conoVision.rotation,
-                        rotacionObjetivo,
-                        velocidadRotacion * Time.deltaTime
-                    );
-                }
-
-                acceleration = Vector3.zero;
-
-                // Si ha llegado a la posición del sonido, vuelve a buscar.
-                if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
-                {
-                    tienePosicionSonido = false;
-                    CambiarEstado(Estado.Buscando);
-
-                    ReiniciarCaminoAStar();
-                    velocity = Vector3.zero;
-                }
+                LanzarEvento("noise_heard");
             }
             else
             {
-                CambiarEstado(Estado.Buscando);
-                ReiniciarCaminoAStar();
-                velocity = Vector3.zero;
+                LanzarEvento("player_lost");
             }
+            velocity = Vector3.zero;
 
-            
+            return;
         }
-        else if (EstadoActual == Estado.Patrullando)
+
+        Pursue(playerTrn.position);
+        ObstacleAvoidance();
+
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        transform.position += velocity * Time.deltaTime;
+
+
+        //Rotación del cono de visión
+        rotacionVision = velocity.normalized;
+        if (rotacionVision != Vector3.zero && conoVision != null)
         {
-            // Movimiento entre los waypoints de la patrulla
-            Vector3 direccionRuta = CalcularDireccionPatrulla();
+            float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
+            float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
+            Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
 
-            velocity = Vector3.Lerp(velocity, direccionRuta, Time.deltaTime * 2f);
-
-            ObstacleAvoidance();
-
-            velocity += acceleration;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            transform.position += velocity * Time.deltaTime;
-
-            //Rotación del cono de visión
-            rotacionVision = velocity.normalized;
-
-            if (rotacionVision != Vector3.zero && conoVision != null)
-            {
-                float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
-                float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
-                Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
-
-                conoVision.rotation = Quaternion.Slerp(
-                    conoVision.rotation,
-                    rotacionObjetivo,
-                    velocidadRotacion * Time.deltaTime
-                );
-            }
-
-            acceleration = Vector3.zero;
-            firstPursue = true;
+            conoVision.rotation = Quaternion.Slerp(
+                conoVision.rotation,
+                rotacionObjetivo,
+                velocidadRotacion * Time.deltaTime
+            );
         }
-        else
+
+
+        acceleration = Vector3.zero;
+        tiempoSinVerJugador += Time.deltaTime;
+
+        if (tiempoSinVerJugador >= tiempoDePersecucion)
         {
-            // Si no está patrullando, persiguiendo o siguiendo un sonido,
-            // se queda quieto mientras está en estado Buscando.
-            firstPursue = true;
+            tiempoSinVerJugador = 0f;
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
+
+            ReiniciarCaminoAStar();
+
+            // Conservar el comportamiento del código antiguo:
+            // investigar el sonido si hay uno pendiente.
+            if (tienePosicionSonido)
+            {
+                LanzarEvento("noise_heard");
+            }
+            else
+            {
+                LanzarEvento("player_lost");
+            }
+
+            Debug.Log("Skeleton ha perdido al jugador");
         }
     }
+
+    // =========================================
+    // ESTADO: SIGUIENDO UN SONIDO
+    // =========================================
+    public override void EjecutarSeguirSonido()
+    {
+        if (!tienePosicionSonido)
+        {
+            ReiniciarCaminoAStar();
+
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+
+            LanzarEvento("sound_reached"); //cambia a estado buscando
+            return;
+        }
+  
+        Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+
+        Seek(siguienteNodo);
+        ObstacleAvoidance();
+
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        transform.position += velocity * Time.deltaTime;
+
+        rotacionVision = velocity.normalized;
+
+        if (rotacionVision != Vector3.zero && conoVision != null)
+        {
+            ActualizarRotacionVision();
+        }
+
+
+        acceleration = Vector3.zero;
+
+        if (Vector3.Distance(transform.position, posicionSonido)
+            < distanciaNodoAStar)
+        {
+            tienePosicionSonido = false;
+
+            ReiniciarCaminoAStar();
+
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+
+            LanzarEvento("sound_reached");
+        }
+    }
+
 
     public void FollowMode(Transform objetivo)
     {
@@ -185,11 +191,11 @@ public class Skeleton : Enemy
         playerTrn = objetivo;
         tiempoSinVerJugador = 0f;
 
-        if (EstadoActual != Estado.Persiguiendo)
+        if (!(EstadoActual is PersiguiendoState))
         {
             ReiniciarCaminoAStar();
             firstPursue = true;
-            CambiarEstado(Estado.Persiguiendo);
+            LanzarEvento("player_detected");
         }
 
         Debug.Log("¡Jugador detectado!, entrando en modo persecucion");
@@ -197,11 +203,39 @@ public class Skeleton : Enemy
 
     public bool EstaPersiguiendo()
     {
-        return EstadoActual == Estado.Persiguiendo;
+        return EstadoActual is PersiguiendoState;
     }
 
     public Transform PlayerTransform()
     {
         return playerTrn;
+    }
+
+    // =========================================
+    // ROTACIÓN DEL CONO DE VISIÓN
+    // =========================================
+    private void ActualizarRotacionVision()
+    {
+        if (conoVision == null || velocity.sqrMagnitude < 0.0001f)
+            return;
+
+        rotacionVision = velocity.normalized;
+
+        float anguloGrados = Mathf.Atan2(
+            rotacionVision.y,
+            rotacionVision.x
+        ) * Mathf.Rad2Deg;
+
+        Quaternion rotacionObjetivo = Quaternion.Euler(
+            0f,
+            0f,
+            anguloGrados
+        );
+
+        conoVision.rotation = Quaternion.Slerp(
+            conoVision.rotation,
+            rotacionObjetivo,
+            velocidadRotacion * Time.deltaTime
+        );
     }
 }
