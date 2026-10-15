@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class slimeIA : Enemy
 {
-    private Estado estadoAnterior;
+    //private Estado estadoAnterior;
 
     [Header("Deteccion")]//Provisional
     public float radioDeteccion = 2f;
     
     void Start()
     {
-        InicializarMaquinaEstados(Estado.Buscando);
-        estadoAnterior = EstadoActual;
+        InicializarMaquinaEstados<BuscandoState>();
+        //estadoAnterior = EstadoActual;
     }
 
     //===============================
@@ -18,105 +18,130 @@ public class slimeIA : Enemy
     //===============================
     void Update()
     {
-        if (EstadoActual != estadoAnterior)
-        {
-            if (EstadoActual == Estado.Persiguiendo)
-            {
-                ReiniciarCaminoAStar();
-            }
+        if (maquinaEstados == null)
+            return;
 
-            estadoAnterior = EstadoActual;
-        }
-        if (EstadoActual == Estado.Buscando)
-        {
-            // Aplicamos la variación de dirección ligera del Wander
-            ApplyWanderDirect();
+        // La máquina ejecuta el comportamiento del estado actual.
+        maquinaEstados.ActualizarEstado();
 
-            // Convertimos esa dirección deseada en una fuerza de dirección (Steering)
-            Vector3 desired = (Vector3)moveDirection * maxSpeed;
-            Vector3 steer = desired - velocity;
-            steer = Vector3.ClampMagnitude(steer, maxForce);
-            applyForce(steer);
-
-            if (velocity.magnitude < 0.01f && moveDirection != Vector2.zero)
-            {
-                velocity = (Vector3)moveDirection * 0.1f;
-            }
-
-            // 3. Calculamos la esquiva de obstáculos sobre la misma acumulación de fuerzas
-            ObstacleAvoidance();
-        }
-        else if (EstadoActual == Estado.SeguirSonido)
-        {
-            if (tienePosicionSonido)
-            {
-                Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
-                Seek(siguienteNodo);
-                /*
-                Vector3 direccion = (siguienteNodo - transform.position).normalized;
-
-                velocity = direccion * maxSpeed;
-                */
-                ObstacleAvoidance();
-
-                velocity += acceleration;
-                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-                transform.position += velocity * Time.deltaTime;
-
-                acceleration = Vector3.zero;
-
-                if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
-                {
-                    CambiarEstado(Estado.Buscando);
-                    ReiniciarCaminoAStar();
-                    velocity = Vector3.zero;
-                }
-            }
-        }
-        else if (EstadoActual == Estado.Persiguiendo) 
-        {
-
-            Seek(playerTrn.position);
-            ObstacleAvoidance();
-            
-
-            //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
-            velocity += acceleration;
-            //limita la velocidad actual a la velocidad máxima -> this.velocity.limit(this.maxspeed);
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-           
-
-            //mover el goblin -> this.position.add(this.velocity);
-            transform.position += velocity * Time.deltaTime;
-            //resetear la aceleracion -> this.acceleration.mult(0);
-            acceleration = Vector3.zero;
-
-
-            tiempoSinVerJugador += Time.deltaTime;
-            if (tiempoSinVerJugador >= tiempoDePersecucion)
-            {
-                InicializarMaquinaEstados(Estado.Buscando);
-                //Debug.Log("Mucho tiempo sin ver al jugador, Estado: BUSCANDO");
-                velocity = Vector3.zero;//Pasan cosas de buscar
-            }
-        }
-
-        velocity += acceleration;
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-        // Mover la posición según la velocidad calculada
-        transform.position += velocity * Time.deltaTime;
-
-        // Resetear la aceleración para el siguiente frame
-        acceleration = Vector3.zero;
-
-        //Esto es para que el sprite flippee en direccion a donde mira
-        if (velocity.magnitude > 0f)
+        // Orientar el sprite según la dirección del movimiento.
+        if (sprite != null && velocity.magnitude > 0.01f)
         {
             sprite.flipX = velocity.x < 0;
         }
     }
+
+    //===============================
+    //ESTADO BUSCANDO
+    //===============================
+    public override void EjecutarBuscando()
+    {
+        // Aplicar variación ligera de dirección.
+        ApplyWanderDirect();
+
+        // Calcular la fuerza de dirección.
+        Vector3 desired = (Vector3)moveDirection * maxSpeed;
+        Vector3 steer = desired - velocity;
+        steer = Vector3.ClampMagnitude(steer, maxForce);
+
+        applyForce(steer);
+
+        if (velocity.magnitude < 0.01f && moveDirection != Vector2.zero)
+        {
+            velocity = (Vector3)moveDirection * 0.1f;
+        }
+
+        // Esquivar obstáculos.
+        ObstacleAvoidance();
+
+        // Aplicar aceleración y mover una sola vez.
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        transform.position += velocity * Time.deltaTime;
+
+        acceleration = Vector3.zero;
+    }
+
+    // =========================================
+    // ESTADO: SIGUIENDO UN SONIDO
+    // =========================================
+    public override void EjecutarSeguirSonido()
+    {
+        if (!tienePosicionSonido)
+        {
+            ReiniciarCaminoAStar();
+
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+
+            LanzarEvento("sound_reached");
+            return;
+        }
+        if (tienePosicionSonido) 
+        {
+            Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+            Seek(siguienteNodo);
+            ObstacleAvoidance();
+
+            velocity += acceleration;
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+            transform.position += velocity * Time.deltaTime;
+            acceleration = Vector3.zero;
+
+        }
+
+        // Comprobar si ha llegado a la posición del sonido.
+        if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
+        {
+            tienePosicionSonido = false;
+            ReiniciarCaminoAStar();
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+
+            LanzarEvento("sound_reached");
+        }
+    }
+
+    //===============================
+    //ESTADO PERSIGUIENDO
+    //===============================
+    public override void EjecutarPersecucion()
+    {
+        if (playerTrn == null)
+        {
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+
+            LanzarEvento("player_lost");
+            return;
+        }
+
+        Seek(playerTrn.position);
+        ObstacleAvoidance();
+
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        transform.position += velocity * Time.deltaTime;
+
+        acceleration = Vector3.zero;
+
+        // El slime deja de perseguir cuando se agota el tiempo.
+        tiempoSinVerJugador += Time.deltaTime;
+
+        if (tiempoSinVerJugador >= tiempoDePersecucion)
+        {
+            velocity = Vector3.zero;
+            acceleration = Vector3.zero;
+            playerTrn = null;
+
+            LanzarEvento("player_lost");
+        }
+    }
+
+    
+
 
     public void HearNoise(Transform noisePosition)
     {
@@ -127,7 +152,7 @@ public class slimeIA : Enemy
         if (distancia <= radioDeteccion)
         {
             playerTrn = noisePosition;
-            CambiarEstado(Estado.Persiguiendo);
+            LanzarEvento("player_detected");
         }
         else
         {
@@ -135,7 +160,7 @@ public class slimeIA : Enemy
             tienePosicionSonido = true;
 
             ReiniciarCaminoAStar();
-            CambiarEstado(Estado.SeguirSonido);
+            LanzarEvento("noise_heard");
         }
     }
     

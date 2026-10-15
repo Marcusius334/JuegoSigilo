@@ -10062,6 +10062,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sound (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6275061466990681665, guid: 6049e845f10c9944180a50e8692496d4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6594927150446578227, guid: 6049e845f10c9944180a50e8692496d4, type: 3}
       propertyPath: noiseRadius
       value: 8.2

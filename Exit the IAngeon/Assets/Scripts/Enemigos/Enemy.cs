@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class Enemy : MonoBehaviour, IHearing
 {
@@ -58,7 +59,7 @@ public class Enemy : MonoBehaviour, IHearing
 
     [Header("State Machine")]
     [SerializeField] protected StateMachine maquinaEstados;
-    public Estado EstadoActual => maquinaEstados.EstadoActual;
+   
 
     //===============================
     // A*
@@ -76,16 +77,6 @@ public class Enemy : MonoBehaviour, IHearing
 
     protected float temporizadorAStar;
 
-    //===============================
-    //LOS DIFERENTES ESTADOS
-    //===============================
-    public enum Estado{
-        Patrullando,
-        Buscando, //TODOS LOS SITIOS LOS QUE PONGA BUSCANDO HAY Q SUSTITUIRLOS POR PATRULLANDO (he usado el estado Buscando para hacer pruebas solo )
-        SeguirSonido,
-        Persiguiendo,
-        Acorralando
-    }
 
     //===============================
     //START
@@ -99,6 +90,10 @@ public class Enemy : MonoBehaviour, IHearing
         sprite = GetComponentInChildren<SpriteRenderer>();
 
         maquinaEstados = GetComponent<StateMachine>();
+        if (maquinaEstados == null) 
+        {
+            Debug.LogError($"{name} necesita un componente StateMachine.", this);
+        }
 
         //Preparación para el seek
         velocity = Vector3.zero; //se inicializan los vectores a 0, en la web lo que pone es this.velocity = createVector(0, 0);
@@ -111,9 +106,9 @@ public class Enemy : MonoBehaviour, IHearing
 
         //Preparación wander
         // Inicializamos una dirección aleatoria y la normalizamos
-        moveDirection = Random.insideUnitCircle.normalized;
+        moveDirection = UnityEngine.Random.insideUnitCircle.normalized;
         // Punto inicial dentro del círculo de wander
-        wanderTarget = Random.insideUnitCircle * wanderRadius;
+        wanderTarget = UnityEngine.Random.insideUnitCircle * wanderRadius;
 
         //Preparación para el obstacle avoidance
         avoidanceSide = 0;//Cosa de obstacle
@@ -123,40 +118,54 @@ public class Enemy : MonoBehaviour, IHearing
     //===============================
     // MAQUINA DE ESTADOS   
     //===============================
-    protected void InicializarMaquinaEstados(Estado estadoInicial) 
+    public virtual void EjecutarBuscando() { }
+    public virtual void EjecutarPatrulla() { }
+    public virtual void EjecutarPersecucion() { }
+    public virtual void EjecutarSeguirSonido() { }
+    public virtual void EjecutarAcorralamiento() { }
+
+    public State EstadoActual => maquinaEstados != null ? maquinaEstados.EstadoActual : null;
+    public State EstadoAnterior => maquinaEstados != null ? maquinaEstados.EstadoAnterior : null;
+    protected void InicializarMaquinaEstados<T>() where T : State, new()
     {
-        //Esta función solo sirve para inicializar la Maquina
-            maquinaEstados.Inicializar(estadoInicial);
+        if(maquinaEstados != null)
+            maquinaEstados.Inicializar<T>();
     }
-    protected void CambiarEstado(Estado nuevoEstado) 
+    protected void CambiarEstado<T>() where T : State, new() 
     {
-            maquinaEstados.CambiarEstado(nuevoEstado);
+        if (maquinaEstados != null)
+            maquinaEstados.CambiarEstado(typeof(T));
+    }
+    protected void CambiarEstado(Type tipoEstado)
+    {
+        if (maquinaEstados != null)
+            maquinaEstados.CambiarEstado(tipoEstado);
+    }
+    protected void LanzarEvento(string evento) 
+    {
+        if (maquinaEstados != null)
+            maquinaEstados.LanzarEvento(evento);
     }
 
     //===============================
     //ESCUCHAR EL SONIDO
     //===============================
-    
-    
-    
+
+
+
     public virtual void SetNoisePosition(Transform noisePosition)
     {
         if (noisePosition == null)
             return;
 
+        if (EstadoActual is PersiguiendoState) //No interrumpimos una persecución activa
+            return;
+
         posicionSonido = noisePosition.position;
         tienePosicionSonido = true;
 
-        Debug.Log("Enemy: ruido recibido en " + posicionSonido);
-        Debug.Log("Enemy: estado actual = " + EstadoActual);
-
-        if (EstadoActual == Estado.Persiguiendo)
-            return;
-
         ReiniciarCaminoAStar();
-        CambiarEstado(Estado.SeguirSonido);
-
-        Debug.Log("Enemy: estado después del cambio = " + EstadoActual);
+        LanzarEvento("noise_heard");
     }
 
 
@@ -238,8 +247,8 @@ public class Enemy : MonoBehaviour, IHearing
     {
         // Añadimos pequeña variación aleatoria
         wanderTarget += new Vector2(
-            Random.Range(-1f, 1f) * wanderJitter,
-            Random.Range(-1f, 1f) * wanderJitter
+            UnityEngine.Random.Range(-1f, 1f) * wanderJitter,
+            UnityEngine.Random.Range(-1f, 1f) * wanderJitter
         );
 
         wanderTarget = wanderTarget.normalized * wanderRadius;

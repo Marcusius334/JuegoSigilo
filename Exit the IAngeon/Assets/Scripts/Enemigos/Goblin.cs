@@ -1,7 +1,4 @@
-using NUnit.Framework;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
 
 public class Goblin : Enemy
@@ -33,33 +30,18 @@ public class Goblin : Enemy
 
     void Start()
     {
-       
+        
+
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)   //Empezara a patrullar dados los puntos en el inspector
         {
-            InicializarMaquinaEstados(Estado.Patrullando);
+            InicializarMaquinaEstados<PatrullandoState>();
         }
         else
         {
-            InicializarMaquinaEstados(Estado.Buscando);
+            InicializarMaquinaEstados<BuscandoState>();
         }
-        
-        
         fuerzaWander = Vector3.zero;    //La fuerza a cero patatero
-       
-       
-       /* estadoActual = Estado.Buscando;                Por si acaso lo comento xd!!!!
-        
-        //se inica con un movimiento aleatorio (por ahora):
-        float min = -10f;
-        float max = 10f;
-        Vector3 vectorAleatorio = new Vector3(
-            Random.Range(min, max),
-            Random.Range(min, max),
-            0
-        );
-        //velocity = vectorAleatorio.normalized * maxSpeed; para que inicien con una posicion aleatoria 
-        //fuerzaWander = velocity;
-        fuerzaWander = Vector3.zero;*/
+
     }
 
     //===============================
@@ -67,96 +49,133 @@ public class Goblin : Enemy
     //===============================
     void Update()
     {
-        if (EstadoActual == Estado.Buscando)
+        if (maquinaEstados == null)
+            return;
+
+        maquinaEstados.ActualizarEstado();
+
+        // Rotación del cono de visión según el movimiento.
+        rotacionVision = velocity.normalized;
+
+        if (rotacionVision != Vector3.zero && conoVision != null)
+        {
+            float angulo = Mathf.Atan2(
+                rotacionVision.y,
+                rotacionVision.x
+            ) * Mathf.Rad2Deg;
+
+            Quaternion rotacionObjetivo =
+                Quaternion.Euler(0f, 0f, angulo);
+
+            conoVision.rotation = Quaternion.Slerp(
+                conoVision.rotation,
+                rotacionObjetivo,
+                velocidadRotacion * Time.deltaTime
+            );
+        }
+    }
+
+
+    //===============================
+    //ESTADO BUSCANDO
+    //===============================
+    public override void EjecutarBuscando()
+    {
+        velocity = Vector3.zero;
+        acceleration = Vector3.zero;
+    }
+
+    //===============================
+    //ESTADO SEGUIR SONIDO
+    //===============================
+    public override void EjecutarSeguirSonido()
+    {
+        if (!tienePosicionSonido)
+        {
+            Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
+            Seek(siguienteNodo);
+            ObstacleAvoidance();
+
+            velocity += acceleration;
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+            transform.position += velocity * Time.deltaTime;
+            acceleration = Vector3.zero;
+
+            // Si ha llegado a la posición del sonido, vuelve a buscar.
+            if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
+            {
+                tienePosicionSonido = false;
+                playerTrn = null;
+
+                ReiniciarCaminoAStar();
+                velocity = Vector3.zero;
+                acceleration = Vector3.zero;
+
+                if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)
+                {
+                    EncontrarPuntoMasCercano();
+                    LanzarEvento("sound_reached_patrol");
+                }
+                else
+                {
+                    LanzarEvento("sound_reached");
+                }
+            }
+
+        }
+        else
+        {
+            ReiniciarCaminoAStar();
+            velocity = Vector3.zero;
+            LanzarEvento("sound_reached");
+        }
+        return;
+    }
+
+    //===============================
+    //ESTADO PERSECUCIÓN
+    //===============================
+    public override void EjecutarPersecucion()
+    {
+        // Si no hay jugador objetivo, no podemos perseguirlo.
+        if (playerTrn == null)
         {
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
+            LanzarEvento("player_lost");
+            return;
         }
-        else if (EstadoActual == Estado.SeguirSonido)
+
+        // Buscar y desplazarse hacia el jugador.
+        Seek(playerTrn.position);
+        ObstacleAvoidance();
+
+        //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
+        velocity += acceleration;
+        //limita la velocidad actual a la velocidad máxima -> this.velocity.limit(this.maxspeed);
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        //APLICAR EL MOVIMIENTO:
+        transform.position += velocity * Time.deltaTime;
+        //resetear la aceleracion -> this.acceleration.mult(0);
+        acceleration = Vector3.zero;
+
+        // Iniciar el acorralamiento si este goblin vio al jugador.
+        if (haVistoPersonalmenteAlJugador && playerTrn != null)
         {
-            if (tienePosicionSonido)
+            float distanciaJugador = Vector3.Distance(
+                transform.position,
+                playerTrn.position
+            );
+
+            if (distanciaJugador <= distanciaParaAcorralar && !acorralamientoIniciado)
             {
-                Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
-                Seek(siguienteNodo);
-                /*
-                Vector3 direccion = (siguienteNodo - transform.position).normalized;
-
-                velocity = direccion * maxSpeed;
-                */
-
-                ObstacleAvoidance();
-                velocity += acceleration;
-                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-                transform.position += velocity * Time.deltaTime;
-                acceleration = Vector3.zero;
-
-                // Si ha llegado a la posición del sonido, vuelve a buscar.
-                if (Vector3.Distance(transform.position, posicionSonido) < distanciaNodoAStar)
-                {
-                    tienePosicionSonido = false;
-                    playerTrn = null;
-
-                    ReiniciarCaminoAStar();
-                    velocity = Vector3.zero;
-                    acceleration = Vector3.zero;
-
-                    if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)
-                    {
-                        EncontrarPuntoMasCercano();
-                        CambiarEstado(Estado.Patrullando);
-                    }
-                    else
-                    {
-                        CambiarEstado(Estado.Buscando);
-                    }
-                }
-            }
-            else
-            {
-                ReiniciarCaminoAStar();
-                velocity = Vector3.zero;
-                CambiarEstado(Estado.Buscando);
-            }
-        }
-        else if (EstadoActual == Estado.Persiguiendo)
-        {
-            //CALCULAR EL SEEK:
-
-            Seek(playerTrn.position);
-            ObstacleAvoidance();
-
-            //aplicar aceleración a la velocidad -> this.velocity.add(this.acceleration);
-            velocity += acceleration;
-            //limita la velocidad actual a la velocidad máxima -> this.velocity.limit(this.maxspeed);
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-            //=========================================================================================
-            //APLICAR EL MOVIMIENTO:
-
-            transform.position += velocity  * Time.deltaTime;
-            //transform.position += direccion * Time.deltaTime;
-
-            //resetear la aceleracion -> this.acceleration.mult(0);
-            acceleration = Vector3.zero;
-
-            if (haVistoPersonalmenteAlJugador && playerTrn != null)
-            {
-                float distanciaJugador = Vector3.Distance(
-                    transform.position,
-                    playerTrn.position
-                );
-
-                if (distanciaJugador <= distanciaParaAcorralar && !acorralamientoIniciado)
-                {
-                    acorralamientoIniciado = true;
-                    IniciarAcorralamiento();
-                }
+                acorralamientoIniciado = true;
+                IniciarAcorralamiento();
             }
 
-            // =====================================================
             // CONTROL DEL TIEMPO SIN VER AL JUGADOR
-            // =====================================================
+            tiempoSinVerJugador = Time.time - ultimoMomentoVioJugador;
 
             if (haVistoPersonalmenteAlJugador)
             {
@@ -169,147 +188,126 @@ public class Goblin : Enemy
                 }
             }
         }
-        else if (EstadoActual == Estado.Patrullando)
-        {
-            fuerzaWander = CalcularDireccionPatrulla(); // Calcula la ruta
-            ObstacleAvoidance();                        // Esquiva las paredes
-
-            
-            //CALCULAR EL FLOKING: //Solo se hace flockin g cuando patrullan juntos 
-
-
-            //buscar goblins cercanos:
-            Collider2D[] nearbyGoblins = Physics2D.OverlapCircleAll(transform.position, perceptionRadius, GoblinLayer);
-
-            int vecinos = 0;
-
-            Vector3 cohesion = Vector3.zero;
-            Vector3 alineacion = Vector3.zero;
-            Vector3 separacion = Vector3.zero;
-
-            //procesar vecinos:
-            foreach (Collider2D goblin in nearbyGoblins)
-            {
-                //ignora a si mismo:
-                if (goblin.gameObject == this.gameObject) continue;
-
-                Goblin vecino = goblin.GetComponent<Goblin>();
-
-                if (vecino == null) continue;
-
-                float distancia = Vector3.Distance(transform.position, goblin.transform.position);
-                //Vector3 direccion = Vector3.zero;
-
-                //cohesion (sumar posiciones):
-                cohesion += goblin.transform.position;
-                //alineacion (sumar orientaciones):
-                alineacion += vecino.velocity;
-                //separacion (en caso de estar muy cerca el uno del otro):
-                if (distancia < separationRadius && distancia > 0.001f)
-                {
-                    separacion += (transform.position - goblin.transform.position) / distancia;
-                }
-
-                vecinos++;
-            }
-
-            //si tiene vecinos, se cambia su comprotamiento:
-            if (vecinos > 0)
-            {
-                // --- EN MANADA ---
-
-                //cohesion:
-                cohesion = ((cohesion / vecinos) - transform.position).normalized;
-                //alineacion:
-                alineacion = (alineacion / vecinos).normalized;
-                //separacion:
-                separacion = separacion.normalized;
-
-                //combinar las 3 fuerzas:
-                Vector3 steering = (cohesion * cohesionWeight) +
-                           (alineacion * alignmentWeight) +
-                           (separacion * separationWeight) +
-                           fuerzaWander;
-
-                velocity = Vector3.Lerp(velocity, steering.normalized * maxSpeed, Time.deltaTime * 3f);
-                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            }
-            else
-            {
-                // --- EN SOLITARIO ---
-
-                velocity = Vector3.Lerp(velocity, fuerzaWander.normalized * maxSpeed, Time.deltaTime * 2f);
-                velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-            }
-
-
-            transform.position += velocity * Time.deltaTime;
-        }
-        else if (EstadoActual == Estado.Acorralando)
-        {
-            if (!tieneObjetivoAcorralamiento) return;
-
-            float distancia = Vector3.Distance(transform.position, objetivoAcorralamiento);
-
-            if (distancia < 0.2f)// Si ya ha llegado a su posición
-            {
-                velocity = Vector3.zero;
-                acceleration = Vector3.zero;
-                return;
-            }
-
-            Seek(objetivoAcorralamiento);
-
-            //separamos de otros goblins que también estén acorralando
-            Collider2D[] goblinsCercanos = Physics2D.OverlapCircleAll(transform.position, separationRadius * 3f, GoblinLayer);
-
-            Vector3 separacionAcorralamiento = Vector3.zero;
-            foreach (Collider2D collider in goblinsCercanos) 
-            {
-                Goblin goblin = collider.GetComponent<Goblin>();
-                if (goblin == null || goblin == this) continue;
-                if (goblin.EstadoActual != Estado.Acorralando) continue;
-                Vector3 direccion = transform.position - goblin.transform.position;
-                float distanciaGoblin = direccion.magnitude;
-
-                if (distanciaGoblin > 0.01f) 
-                {
-                    separacionAcorralamiento += direccion.normalized / distanciaGoblin;
-                }
-            }
-            acceleration += separacionAcorralamiento * 2f;
-
-            ObstacleAvoidance();
-
-            velocity += acceleration;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-            transform.position += velocity * Time.deltaTime;
-
-            acceleration = Vector3.zero;
-        }
-
-
-
-            //rotar cono de vision según el movimiento:
-            rotacionVision = velocity.normalized;
-        if (rotacionVision != Vector3.zero)
-        {
-            //Se calcula el angulo:
-            float anguloRadianes = Mathf.Atan2(rotacionVision.y, rotacionVision.x);
-            float anguloGrados = anguloRadianes * Mathf.Rad2Deg;
-
-            //Crea la rotación en Z:
-            Quaternion rotacionObjetivo = Quaternion.Euler(0f, 0f, anguloGrados);
-
-            //Aplica la rotación:
-            conoVision.rotation = Quaternion.Slerp(
-                conoVision.rotation, 
-                rotacionObjetivo, 
-                velocidadRotacion * Time.deltaTime
-            );
-        }
     }
+
+
+    //===============================
+    //ESTADO PATRULLA
+    //===============================
+    public override void EjecutarPatrulla()
+    {
+        fuerzaWander = CalcularDireccionPatrulla();// Calcula la ruta
+        ObstacleAvoidance();// Esquiva las paredes
+
+        //buscar goblins cercanos:
+        Collider2D[] nearbyGoblins = Physics2D.OverlapCircleAll(
+            transform.position,
+            perceptionRadius,
+            GoblinLayer
+        );
+
+        int vecinos = 0;
+
+        Vector3 cohesion = Vector3.zero;
+        Vector3 alineacion = Vector3.zero;
+        Vector3 separacion = Vector3.zero;
+
+        foreach (Collider2D goblin in nearbyGoblins)
+        {
+            //ignora a si mismo
+            if (goblin.gameObject == gameObject) continue;
+
+            Goblin vecino = goblin.GetComponent<Goblin>();
+
+            if (vecino == null) continue;
+
+            float distancia = Vector3.Distance(transform.position,vecino.transform.position);
+
+            //cohesion (sumar posiciones):
+            cohesion += vecino.transform.position;
+            //alineacion (sumar orientaciones):
+            alineacion += vecino.velocity;
+            //separacion (en caso de estar muy cerca el uno del otro):
+            if (distancia < separationRadius && distancia > 0.001f)
+            {
+                separacion += (transform.position - vecino.transform.position) / distancia;
+            }
+
+            vecinos++;
+        }
+        //si tiene vecinos, se cambia su comprotamiento:
+        if (vecinos > 0)
+        {
+            // --- EN MANADA ---
+            cohesion = ((cohesion / vecinos) - transform.position).normalized;
+            alineacion = (alineacion / vecinos).normalized;
+            separacion = separacion.normalized;
+            //combinar las 3 fuerzas:
+            Vector3 steering =
+                cohesion * cohesionWeight +
+                alineacion * alignmentWeight +
+                separacion * separationWeight +
+                fuerzaWander;
+
+            velocity = Vector3.Lerp(velocity,steering.normalized * maxSpeed,Time.deltaTime * 3f);
+        }
+        else
+        {
+            // --- EN SOLITARIO --
+            velocity = Vector3.Lerp(velocity,fuerzaWander.normalized * maxSpeed,Time.deltaTime * 2f);
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        }
+        transform.position += velocity * Time.deltaTime;
+    }
+
+    //===============================
+    //ESTADO ACORRALAMIENTO: el acorralamiento, al ser una función única de los Goblins, está programada en el script AcorralandoState.cs
+    //===============================
+
+
+
+//--------------------------------------------------------------------------------------------------------------------------------
+    //===============================
+    //MÉTODOS AUXILIARES (se usan en el AcorralandoState.cs para poder acceder a las variables de goblin y funciones heredadas de Enemy)
+    //===============================
+
+    public bool TieneObjetivoAcorralamiento(){return tieneObjetivoAcorralamiento;}
+
+    public Vector3 ObtenerObjetivoAcorralamiento(){return objetivoAcorralamiento;}
+
+    public void BuscarObjetivoAcorralamiento(){Seek(objetivoAcorralamiento);}
+
+    public void AplicarSeparacionAcorralamiento(Vector3 separacion){acceleration += separacion * 2f;}
+
+    public void EvitarObstaculos(){ObstacleAvoidance();}
+
+    public void ActualizarMovimiento()
+    {
+        velocity += acceleration;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        transform.position += velocity * Time.deltaTime;
+
+        acceleration = Vector3.zero;
+    }
+
+    public void DetenerMovimiento()
+    {
+        velocity = Vector3.zero;
+        acceleration = Vector3.zero;
+    }
+
+
+
+
+
+
+
+    //-----------------------------------------------------------------------------------------------------------------------//
+
+
+
+
 
     //===============================
     //PERDER JUGADOR
@@ -323,12 +321,13 @@ public class Goblin : Enemy
         {
 
             EncontrarPuntoMasCercano(); //  Busca el punto mas cercano, tambien temporal hasta el Pathfollowing A*
-            CambiarEstado(Estado.Patrullando);
+            LanzarEvento("player_lost_patrol");
         }
-        else
-            CambiarEstado(Estado.Buscando);
+        else 
+        {
+            LanzarEvento("player_lost_search");
 
-
+        }
         haVistoPersonalmenteAlJugador = false;
         liderGoblin = null;
 
@@ -378,12 +377,18 @@ public class Goblin : Enemy
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
 
-        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0){
+        if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)
+        {
             EncontrarPuntoMasCercano(); //  Busca el punto mas cercano, tambien temporal hasta el Pathfollowing A*
-            InicializarMaquinaEstados(Estado.Patrullando);
+            //CambiarEstado<PatrullandoState>();
+            LanzarEvento("leader_lost_patrol");
         }
-        else
-            InicializarMaquinaEstados(Estado.Buscando);
+        else 
+        {
+            //CambiarEstado<BuscandoState>();
+            LanzarEvento("leader_lost_search");
+        }
+            
 
         liderGoblin = null;
         playerTrn = null;
@@ -417,7 +422,7 @@ public class Goblin : Enemy
             Goblin goblin = collider.GetComponent<Goblin>();
             if (goblin == null || goblin == this) continue;
             if(goblin == null) continue;
-            if (goblin.EstadoActual == Estado.Acorralando) continue;
+            if (goblin.EstadoActual is AcorralandoState) continue;
 
             goblinsDisponibles.Add(goblin);
         }
@@ -496,7 +501,7 @@ public class Goblin : Enemy
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
 
-        CambiarEstado(Estado.Acorralando);
+        LanzarEvento("start_surround");
     }
 
 
@@ -506,8 +511,8 @@ public class Goblin : Enemy
     //===============================
     public void FollowMode(Transform objetivo)
     {
-        
-     
+        if (objetivo == null) return;
+
         playerTrn = objetivo;
 
         //Los Goblins que entran en FOLLOWMODE son los que SI han visto al jugador (no los que escuchan)
@@ -516,7 +521,7 @@ public class Goblin : Enemy
         ultimoMomentoVioJugador = Time.time;  // Cada vez que realmente ve al jugador,actualizamos el momento de la última visión.
         tiempoSinVerJugador = 0f;
 
-        CambiarEstado(Estado.Persiguiendo);
+        LanzarEvento("player_detected");
         Scream();
 
         AvisarPosicionJugador();
@@ -584,7 +589,7 @@ public class Goblin : Enemy
         tiempoSinVerJugador = 0f;
 
         ReiniciarCaminoAStar();
-        CambiarEstado(Estado.SeguirSonido);
+        LanzarEvento("noise_heard");
     }
 
     //===============================
