@@ -18,6 +18,7 @@ public class PersiguiendoState : State
 
     public override void Enter(Enemy enemigo)
     {
+        enemigo.PlayAlert();
         enemigo.tiempoSinVerJugador = 0f;
     }
 
