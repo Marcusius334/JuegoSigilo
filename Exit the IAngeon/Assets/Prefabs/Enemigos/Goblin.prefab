@@ -171,7 +171,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   perceptionRadius: 10
-  separationRadius: 0.6
+  separationRadius: 3
+  minnimumSeparationRadius: 1
   separationWeight: 1.5
   alignmentWeight: 5
   cohesionWeight: 5

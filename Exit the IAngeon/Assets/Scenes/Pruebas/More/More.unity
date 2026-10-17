@@ -23601,6 +23601,10 @@ PrefabInstance:
       value: 9.7
       objectReference: {fileID: 0}
     - target: {fileID: 4427360555035156193, guid: c68e562c5f049c54f8e2511ff3281efd, type: 3}
+      propertyPath: separationRadius
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427360555035156193, guid: c68e562c5f049c54f8e2511ff3281efd, type: 3}
       propertyPath: puntosDePatrulla.Array.size
       value: 4
       objectReference: {fileID: 0}

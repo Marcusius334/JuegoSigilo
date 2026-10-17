@@ -8,7 +8,8 @@ public class Goblin : Enemy
     public LayerMask GoblinLayer;
     private Vector3 fuerzaWander;
     public float perceptionRadius = 8.0f;
-    public float separationRadius = 1.0f;
+    public float separationRadius = 3.0f;
+    public float minnimumSeparationRadius = 1.0f;
 
     [Header("Pesos de Comportamiento")]
     public float separationWeight = 1.5f;
@@ -17,16 +18,17 @@ public class Goblin : Enemy
     public float wanderWeight = 0.5f;
 
     [Header("Acorralamiento")]
+    public float radioAcorralamiento = 15f;
+    public float distanciaParaAcorralar = 20f;
+    public float anguloAcorralamiento = 360f;
+    public int maxGoblinsAcorralamiento = 6;
     private bool haVistoPersonalmenteAlJugador = false;// Indica si ESTE goblin ha visto personalmente al jugador.
     private Goblin liderGoblin; // Si está persiguiendo porque otro goblin le avisó, aquí guardamos quién fue ese goblin.
     private float ultimoMomentoVioJugador = -Mathf.Infinity;// Último momento en el que este goblin vio personalmente al jugador.
     private Vector3 objetivoAcorralamiento;
     private bool tieneObjetivoAcorralamiento;
     private bool acorralamientoIniciado = false;
-    public float radioAcorralamiento = 15f;
-    public float distanciaParaAcorralar = 20f;
-    public float anguloAcorralamiento = 360f;
-    public int maxGoblinsAcorralamiento = 6;
+    
 
     void Start()
     {
@@ -197,7 +199,7 @@ public class Goblin : Enemy
     public override void EjecutarPatrulla()
     {
         fuerzaWander = CalcularDireccionPatrulla();// Calcula la ruta
-        ObstacleAvoidance();// Esquiva las paredes
+        
 
         //buscar goblins cercanos:
         Collider2D[] nearbyGoblins = Physics2D.OverlapCircleAll(
@@ -228,7 +230,7 @@ public class Goblin : Enemy
             //alineacion (sumar orientaciones):
             alineacion += vecino.velocity;
             //separacion (en caso de estar muy cerca el uno del otro):
-            if (distancia < separationRadius && distancia > 0.001f)
+            if (distancia < separationRadius && distancia > minnimumSeparationRadius)
             {
                 separacion += (transform.position - vecino.transform.position) / distancia;
             }
@@ -257,6 +259,7 @@ public class Goblin : Enemy
             velocity = Vector3.Lerp(velocity,fuerzaWander.normalized * maxSpeed,Time.deltaTime * 2f);
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         }
+        ObstacleAvoidance();// Esquiva las paredes
         transform.position += velocity * Time.deltaTime;
     }
 
