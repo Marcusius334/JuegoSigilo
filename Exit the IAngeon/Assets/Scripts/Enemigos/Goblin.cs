@@ -9,7 +9,6 @@ public class Goblin : Enemy
     private Vector3 fuerzaWander;
     public float perceptionRadius = 8.0f;
     public float separationRadius = 3.0f;
-    public float minnimumSeparationRadius = 1.0f;
 
     [Header("Pesos de Comportamiento")]
     public float separationWeight = 1.5f;
@@ -230,7 +229,7 @@ public class Goblin : Enemy
             //alineacion (sumar orientaciones):
             alineacion += vecino.velocity;
             //separacion (en caso de estar muy cerca el uno del otro):
-            if (distancia < separationRadius && distancia > minnimumSeparationRadius)
+            if (distancia < separationRadius && distancia > 0.0001f)
             {
                 separacion += (transform.position - vecino.transform.position) / distancia;
             }
