@@ -56,6 +56,14 @@ PrefabInstance:
       propertyPath: noiseRadius
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 6505419635905485852, guid: 6ed91f26e3912384891f488259e256a9, type: 3}
+      propertyPath: wanderWeight
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6505419635905485852, guid: 6ed91f26e3912384891f488259e256a9, type: 3}
+      propertyPath: distanciaCambioPunto
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

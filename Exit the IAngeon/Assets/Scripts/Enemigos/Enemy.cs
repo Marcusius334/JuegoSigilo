@@ -325,7 +325,7 @@ public class Enemy : MonoBehaviour, IHearing
 
                 steer = Vector3.ClampMagnitude(
                     steer,
-                    maxForce * 3f
+                    maxForce * 5f
                 );
 
                 applyForce(steer);

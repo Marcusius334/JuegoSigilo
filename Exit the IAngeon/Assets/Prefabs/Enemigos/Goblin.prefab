@@ -163,20 +163,19 @@ MonoBehaviour:
   obstacleDistance: 1.5
   emergencyDistance: 0.5
   puntosDePatrulla: []
-  distanciaCambioPunto: 0.5
+  distanciaCambioPunto: 0.8
   maquinaEstados: {fileID: 0}
   distanciaNodoAStar: 1
   tiempoRecalculoAStar: 0.3
   GoblinLayer:
     serializedVersion: 2
     m_Bits: 64
-  perceptionRadius: 10
-  separationRadius: 3
-  minnimumSeparationRadius: 1
-  separationWeight: 1.5
-  alignmentWeight: 5
-  cohesionWeight: 5
-  wanderWeight: 0.5
+  perceptionRadius: 5
+  separationRadius: 1
+  separationWeight: 1.25
+  alignmentWeight: 1.5
+  cohesionWeight: 0.75
+  wanderWeight: 1.25
   radioAcorralamiento: 3
   distanciaParaAcorralar: 20
   anguloAcorralamiento: 360
