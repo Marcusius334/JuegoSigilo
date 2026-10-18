@@ -219,38 +219,65 @@ public class Goblin : Enemy
             if (goblin.gameObject == gameObject) continue;
 
             Goblin vecino = goblin.GetComponent<Goblin>();
-
             if (vecino == null) continue;
 
             float distancia = Vector3.Distance(transform.position,vecino.transform.position);
 
-            //cohesion (sumar posiciones):
-            cohesion += vecino.transform.position;
-            //alineacion (sumar orientaciones):
-            alineacion += vecino.velocity;
-            //separacion (en caso de estar muy cerca el uno del otro):
-            if (distancia < separationRadius && distancia > 0.0001f)
+            if (distancia > 0.0001f)
             {
-                separacion += (transform.position - vecino.transform.position) / distancia;
-            }
+                // Cohesión: Acumular posiciones relativas o absolutas
+                cohesion += vecino.transform.position;
+                
+                // Alineación: Acumular velocidades
+                alineacion += vecino.velocity;
 
-            vecinos++;
+                // Separación: Inversamente proporcional al CUADRADO de la distancia
+                if (distancia < separationRadius)
+                {
+                    Vector3 direccionAlejamiento = (transform.position - vecino.transform.position).normalized;
+                    // Cuanto más cerca estén, exponencialmente mayor será la fuerza de repulsión
+                    separacion += direccionAlejamiento / (distancia * distancia);
+                }
+
+                vecinos++;
+            }
         }
+
+        Vector3 steering = Vector3.zero;
+
         //si tiene vecinos, se cambia su comprotamiento:
         if (vecinos > 0)
         {
             // --- EN MANADA ---
-            cohesion = ((cohesion / vecinos) - transform.position).normalized;
+            // Cohesión: Obtener el centro de masa y calcular dirección hacia él
+            Vector3 centroDeMasa = cohesion / vecinos;
+            cohesion = (centroDeMasa - transform.position).normalized;
+
+            // Alineación: Obtener velocidad media
             alineacion = (alineacion / vecinos).normalized;
-            separacion = separacion.normalized;
+
+            // Separación: Normalizar el vector resultante de repulsión
+            if (separacion != Vector3.zero)
+            {
+                separacion = separacion.normalized;
+            }
+
             //combinar las 3 fuerzas:
-            Vector3 steering =
+            steering =
                 cohesion * cohesionWeight +
                 alineacion * alignmentWeight +
-                separacion * separationWeight +
-                fuerzaWander;
+                separacion * separationWeight;
 
-            velocity = Vector3.Lerp(velocity,steering.normalized * maxSpeed,Time.deltaTime * 3f);
+            // 3. Combinar Flocking con el objetivo principal (WayPoints/Patrulla)
+            // fuerzaWander representa la dirección al Waypoint
+            Vector3 direccionFinal = (fuerzaWander.normalized * wanderWeight) + steering;
+
+            if (direccionFinal != Vector3.zero)
+            {
+                // Aplicar fuerza de movimiento progresiva
+                Vector3 velocidadDeseada = direccionFinal.normalized * maxSpeed;
+                velocity = Vector3.Lerp(velocity, velocidadDeseada, Time.deltaTime * 5f);
+            }
         }
         else
         {
@@ -259,6 +286,7 @@ public class Goblin : Enemy
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         }
         ObstacleAvoidance();// Esquiva las paredes
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         transform.position += velocity * Time.deltaTime;
     }
 
