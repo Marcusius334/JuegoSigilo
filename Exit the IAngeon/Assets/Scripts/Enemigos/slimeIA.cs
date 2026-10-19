@@ -9,7 +9,9 @@ public class slimeIA : Enemy
     
     void Start()
     {
-        InicializarMaquinaEstados<BuscandoState>();
+        InicializarMaquinaEstados<BuscandoState>(typeof(BuscandoState),
+        typeof(PersiguiendoState),
+        typeof(SeguirSonidoState));
         //estadoAnterior = EstadoActual;
     }
 

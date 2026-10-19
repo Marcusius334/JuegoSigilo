@@ -21,37 +21,50 @@ public class StateMachine : MonoBehaviour
             owner = GetComponent<Enemy>();
     }
 
-    public void Inicializar(Type tipoEstado)
+    public void Inicializar(Type estadoInicial, params Type[] estadosPosibles)
     {
-        CambiarEstado(tipoEstado);
+        if (owner == null) return; //La stateMachine no tiene enemigo asignado 
+        foreach (Type tipoEstado in estadosPosibles) 
+        {
+            RegistrarEstado(tipoEstado);
+        }
+        // También registra el estado inicial si no estaba en la lista.
+        RegistrarEstado(estadoInicial);
+
+        CambiarEstado(estadoInicial);
     }
-    public void Inicializar<T>() where T : State, new()
+    private void RegistrarEstado(Type tipoEstado) 
+    {
+        if (tipoEstado == null || !typeof(State).IsAssignableFrom(tipoEstado) || tipoEstado.IsAbstract) //El tipo estado es invalido
+        {
+            return;
+        }
+        if (!instanciasEstados.ContainsKey(tipoEstado)) 
+        {
+            State instancia = (State)Activator.CreateInstance(tipoEstado);
+            instanciasEstados.Add(tipoEstado, instancia);
+        }
+    }
+    /*public void Inicializar<T>() where T : State, new()
     {
         Inicializar(typeof(T));
-    }
+    }*/
 
     public void CambiarEstado(Type tipoEstado)
     {
         if (tipoEstado == null || owner == null)
             return;
 
-        if (!typeof(State).IsAssignableFrom(tipoEstado) ||
-            tipoEstado.IsAbstract)
+        if (!instanciasEstados.TryGetValue(tipoEstado, out State nuevoEstado)) //Estado no registrado
         {
-            Debug.LogError($"Tipo de estado inválido: {tipoEstado}");
             return;
         }
 
-        if (estadoActual != null &&
-            estadoActual.GetType() == tipoEstado)
+        if (estadoActual != null && estadoActual.GetType() == tipoEstado)
             return;
 
 
-        if (!instanciasEstados.TryGetValue(tipoEstado, out State nuevoEstado))
-        {
-            nuevoEstado = (State)Activator.CreateInstance(tipoEstado);
-            instanciasEstados.Add(tipoEstado, nuevoEstado);
-        }
+        
 
         estadoActual?.Exit(owner);
 
