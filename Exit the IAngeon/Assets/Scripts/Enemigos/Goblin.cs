@@ -286,6 +286,7 @@ public class Goblin : Enemy
             velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         }
         ObstacleAvoidance();// Esquiva las paredes
+        velocity += acceleration;
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
         transform.position += velocity * Time.deltaTime;
     }
