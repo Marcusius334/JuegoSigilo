@@ -35,11 +35,11 @@ public class Goblin : Enemy
 
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)   //Empezara a patrullar dados los puntos en el inspector
         {
-            InicializarMaquinaEstados<PatrullandoState>();
+            InicializarMaquinaEstados<PatrullandoState>(typeof(PatrullandoState),typeof(BuscandoState),typeof(PersiguiendoState),typeof(SeguirSonidoState),typeof(AcorralandoState));
         }
         else
         {
-            InicializarMaquinaEstados<BuscandoState>();
+            InicializarMaquinaEstados<BuscandoState>(typeof(PatrullandoState),typeof(BuscandoState),typeof(PersiguiendoState),typeof(SeguirSonidoState),typeof(AcorralandoState));
         }
         fuerzaWander = Vector3.zero;    //La fuerza a cero patatero
 

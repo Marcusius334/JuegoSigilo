@@ -7,9 +7,15 @@ public class Skeleton : Enemy
     void Start()
     {
         if (puntosDePatrulla != null && puntosDePatrulla.Length > 0)
-            InicializarMaquinaEstados<PatrullandoState>();
-        else
-            InicializarMaquinaEstados<BuscandoState>();
+        {
+            InicializarMaquinaEstados<PatrullandoState>(typeof(PatrullandoState), typeof(BuscandoState), typeof(PersiguiendoState), typeof(SeguirSonidoState));
+
+        }
+        else 
+        {
+            InicializarMaquinaEstados<BuscandoState>(typeof(PatrullandoState), typeof(BuscandoState), typeof(PersiguiendoState), typeof(SeguirSonidoState));
+        }
+            
     }
 
     void Update()
