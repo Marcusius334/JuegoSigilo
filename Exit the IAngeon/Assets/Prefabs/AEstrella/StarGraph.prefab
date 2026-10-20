@@ -224,6 +224,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   mostrarConexiones: 1
+  margenLlegada: 1
 --- !u!114 &6953143608569059033
 MonoBehaviour:
   m_ObjectHideFlags: 0
