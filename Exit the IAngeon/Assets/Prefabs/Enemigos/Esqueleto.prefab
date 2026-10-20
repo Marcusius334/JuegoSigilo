@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6836474177980714847}
   - component: {fileID: 1434600230967659930}
   - component: {fileID: 3715129573686326028}
+  - component: {fileID: -5282205398733603431}
   m_Layer: 0
   m_Name: Esqueleto
   m_TagString: Enemy
@@ -72,6 +73,7 @@ MonoBehaviour:
   puntosDePatrulla: []
   distanciaCambioPunto: 0.5
   maquinaEstados: {fileID: 0}
+  tienePosicionSonido: 0
   distanciaNodoAStar: 1
   tiempoRecalculoAStar: 0.3
 --- !u!61 &8082351832276095782
@@ -354,6 +356,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-5282205398733603431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155499436406140173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41bada101aa6c2e4da2ceb9b4f616235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHearing
+  hearsWalking: 0
 --- !u!1 &3354864851189939034
 GameObject:
   m_ObjectHideFlags: 0

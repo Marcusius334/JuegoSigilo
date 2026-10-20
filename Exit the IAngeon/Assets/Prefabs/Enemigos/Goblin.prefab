@@ -165,6 +165,7 @@ MonoBehaviour:
   puntosDePatrulla: []
   distanciaCambioPunto: 0.8
   maquinaEstados: {fileID: 0}
+  tienePosicionSonido: 0
   distanciaNodoAStar: 1
   tiempoRecalculoAStar: 0.3
   GoblinLayer:
@@ -174,8 +175,8 @@ MonoBehaviour:
   separationRadius: 1
   separationWeight: 1.25
   alignmentWeight: 1.5
-  cohesionWeight: 0.75
-  wanderWeight: 1.25
+  cohesionWeight: 1
+  wanderWeight: 0.75
   radioAcorralamiento: 3
   distanciaParaAcorralar: 20
   anguloAcorralamiento: 360
