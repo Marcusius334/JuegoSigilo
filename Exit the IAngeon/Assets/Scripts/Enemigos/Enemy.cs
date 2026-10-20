@@ -126,10 +126,13 @@ public class Enemy : MonoBehaviour, IHearing
 
     public State EstadoActual => maquinaEstados != null ? maquinaEstados.EstadoActual : null;
     public State EstadoAnterior => maquinaEstados != null ? maquinaEstados.EstadoAnterior : null;
-    protected void InicializarMaquinaEstados<T>() where T : State, new()
+    protected void InicializarMaquinaEstados<T>(params Type[] estadosPosibles) where T : State, new()
     {
-        if(maquinaEstados != null)
-            maquinaEstados.Inicializar<T>();
+        if(maquinaEstados == null)
+            maquinaEstados = GetComponent<StateMachine>();
+        if(maquinaEstados == null)//no se encuentra la maquina de estados
+            return;
+        maquinaEstados.Inicializar(typeof(T), estadosPosibles);
     }
     protected void CambiarEstado<T>() where T : State, new() 
     {
