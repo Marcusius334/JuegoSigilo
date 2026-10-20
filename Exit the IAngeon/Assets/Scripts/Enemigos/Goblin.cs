@@ -91,8 +91,10 @@ public class Goblin : Enemy
     //===============================
     public override void EjecutarSeguirSonido()
     {
+        Debug.Log("ENTRA1");
         if (!tienePosicionSonido)
         {
+            Debug.Log("ENTRA2");
             Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
             Seek(siguienteNodo);
             ObstacleAvoidance();
