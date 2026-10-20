@@ -57,6 +57,9 @@ public class Enemy : MonoBehaviour, IHearing
     protected int indicePatrulla = 0;
     public float distanciaCambioPunto = 0.5f;
 
+    [Header("Movimiento entre nodos")]
+    public AStarGraph grafo;
+
     [Header("State Machine")]
     [SerializeField] protected StateMachine maquinaEstados;
    
@@ -105,15 +108,20 @@ public class Enemy : MonoBehaviour, IHearing
         playerRunSpeed = playerScr.runSpeed;
 
         //Preparación wander
-        // Inicializamos una dirección aleatoria y la normalizamos
-        moveDirection = UnityEngine.Random.insideUnitCircle.normalized;
         // Punto inicial dentro del círculo de wander
         wanderTarget = UnityEngine.Random.insideUnitCircle * wanderRadius;
+        // Si usamos un grafo por el que moverse:
+        if (grafo == null) moveDirection = UnityEngine.Random.insideUnitCircle.normalized;// Inicializamos una dirección aleatoria y la normalizamos
 
         //Preparación para el obstacle avoidance
         avoidanceSide = 0;//Cosa de obstacle
 
         pathfinding = FindFirstObjectByType<AStarPathfinding>();
+    }
+
+    private void Start()
+    {
+        
     }
     //===============================
     // MAQUINA DE ESTADOS   
@@ -248,6 +256,19 @@ public class Enemy : MonoBehaviour, IHearing
     //===============================
     protected void ApplyWanderDirect()
     {
+        // Si usamos grafo:
+        if (grafo != null)// && grafo.HaLlegadoAlNodo(transform.position))
+        {
+            if (moveDirection == Vector2.zero)
+            {
+                grafo.ElegirPrimerNodo(transform.position);
+                moveDirection = grafo.DireccionDeMovimiento(transform.position);
+            }
+            else if (grafo.HaLlegadoAlNodo(transform.position)) moveDirection = grafo.DireccionDeMovimiento(transform.position);
+            //moveDirection = grafo.DireccionDeMovimiento(transform.position);
+            //Debug.Log("Direccion a la que ir: " + moveDirection);
+        }
+
         // Añadimos pequeña variación aleatoria
         wanderTarget += new Vector2(
             UnityEngine.Random.Range(-1f, 1f) * wanderJitter,
@@ -260,10 +281,13 @@ public class Enemy : MonoBehaviour, IHearing
         Vector2 circleCenter = moveDirection * wanderDistance;
         
         // Obtenemos la dirección deseada
+        Vector2 targetWorldPosition = (Vector2)transform.position + circleCenter + wanderTarget;
         Vector2 targetWorldDirection = (circleCenter + wanderTarget).normalized;
 
         // Rotamos suavemente la dirección actual hacia la dirección del Wander
-        moveDirection = Vector2.Lerp(moveDirection, targetWorldDirection, Time.deltaTime * 3.0f).normalized;
+        if (grafo == null) moveDirection = Vector2.Lerp(moveDirection, targetWorldDirection, Time.deltaTime * 3.0f).normalized;
+
+        Seek(targetWorldPosition);
     }
 
     //===============================

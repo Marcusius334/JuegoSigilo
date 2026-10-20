@@ -151,8 +151,8 @@ MonoBehaviour:
   velocidadRotacion: 15
   maxSpeed: 1
   maxForce: 0.2
-  wanderRadius: 6
-  wanderDistance: 4
+  wanderRadius: 10
+  wanderDistance: 2.5
   wanderJitter: 4
   obstacleLayer:
     serializedVersion: 2
@@ -161,6 +161,7 @@ MonoBehaviour:
   emergencyDistance: 0.5
   puntosDePatrulla: []
   distanciaCambioPunto: 0.52
+  grafo: {fileID: 0}
   maquinaEstados: {fileID: 0}
   distanciaNodoAStar: 0.2
   tiempoRecalculoAStar: 0.3
