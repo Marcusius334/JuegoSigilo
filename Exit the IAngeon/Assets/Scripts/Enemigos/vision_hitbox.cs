@@ -23,7 +23,7 @@ public class vision_hitbox : MonoBehaviour
                 if (otroEnemigo == skeleton) return;
 
                 //Comprobamos su estado:
-                if (otroEnemigo.EstaPersiguiendo()) skeleton.FollowMode(otroEnemigo.PlayerTransform());
+                if (otroEnemigo.EstaPersiguiendo()) skeleton.LanzarEventoDesdeVision("player_detected");
             }
         }
         
@@ -44,8 +44,8 @@ public class vision_hitbox : MonoBehaviour
             if (hit.collider == null)
             {
                 //Debug.Log("No hay ningún muro. ¡Jugador detectado!");
-                if (goblin != null) goblin.FollowMode(other.transform);
-                else if(skeleton != null)skeleton.FollowMode(other.transform);
+                if (goblin != null) goblin.LanzarEventoDesdeVision("player_detected");
+                else if(skeleton != null)skeleton.LanzarEventoDesdeVision("player_detected");
             }
             else
             {

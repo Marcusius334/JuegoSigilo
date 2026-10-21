@@ -54,6 +54,7 @@ public class Skeleton : Enemy
             Time.deltaTime * 2f
         );
 
+
         ObstacleAvoidance();
 
         velocity += acceleration;

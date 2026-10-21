@@ -158,6 +158,11 @@ public class Enemy : MonoBehaviour, IHearing
             maquinaEstados.LanzarEvento(evento);
     }
 
+    public void LanzarEventoDesdeVision(string evento)
+    {
+        LanzarEvento(evento);
+    }
+
     //===============================
     //ESCUCHAR EL SONIDO
     //===============================
@@ -467,7 +472,7 @@ public class Enemy : MonoBehaviour, IHearing
         }
 
         // Dirección hacia el punto
-        return (objetivo.position - transform.position).normalized * maxSpeed;
+        return objetivo.position;// - transform.position).normalized * maxSpeed;
     }
 
     //===============================
