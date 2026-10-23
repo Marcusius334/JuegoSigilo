@@ -472,7 +472,7 @@ public class Enemy : MonoBehaviour, IHearing
         }
 
         // Dirección hacia el punto
-        return objetivo.position;// - transform.position).normalized * maxSpeed;
+        return (objetivo.position - transform.position).normalized * maxSpeed;
     }
 
     //===============================
