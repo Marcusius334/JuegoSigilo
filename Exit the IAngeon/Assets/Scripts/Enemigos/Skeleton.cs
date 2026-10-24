@@ -150,7 +150,7 @@ public class Skeleton : Enemy
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
 
-            LanzarEvento("sound_reached"); //cambia a estado buscando
+            LanzarEvento("sound_reached_patrol");
             return;
         }
   
@@ -184,7 +184,7 @@ public class Skeleton : Enemy
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
 
-            LanzarEvento("sound_reached");
+            LanzarEvento("sound_reached_patrol");
         }
     }
 
