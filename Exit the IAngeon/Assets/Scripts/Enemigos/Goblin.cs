@@ -91,8 +91,10 @@ public class Goblin : Enemy
     //===============================
     public override void EjecutarSeguirSonido()
     {
-        if (!tienePosicionSonido)
+        Debug.Log("ENTRA1");
+        if (tienePosicionSonido)
         {
+            Debug.Log("ENTRA2");
             Vector3 siguienteNodo = ObtenerSiguienteNodoAStar(posicionSonido);
             Seek(siguienteNodo);
             ObstacleAvoidance();
@@ -120,7 +122,7 @@ public class Goblin : Enemy
                 }
                 else
                 {
-                    LanzarEvento("sound_reached");
+                    LanzarEvento("sound_reached_patrol");
                 }
             }
 
@@ -129,7 +131,7 @@ public class Goblin : Enemy
         {
             ReiniciarCaminoAStar();
             velocity = Vector3.zero;
-            LanzarEvento("sound_reached");
+            LanzarEvento("sound_reached_patrol");
         }
         return;
     }

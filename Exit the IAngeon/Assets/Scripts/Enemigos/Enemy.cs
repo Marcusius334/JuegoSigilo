@@ -73,7 +73,7 @@ public class Enemy : MonoBehaviour, IHearing
     protected int indiceCaminoAStar;
 
     protected Vector3 posicionSonido;
-    protected bool tienePosicionSonido = false;
+    public bool tienePosicionSonido = false;
 
     [SerializeField] protected float distanciaNodoAStar = 1f;
     [SerializeField] protected float tiempoRecalculoAStar = 0.3f;
@@ -156,6 +156,11 @@ public class Enemy : MonoBehaviour, IHearing
     {
         if (maquinaEstados != null)
             maquinaEstados.LanzarEvento(evento);
+    }
+
+    public void LanzarEventoDesdeVision(string evento)
+    {
+        LanzarEvento(evento);
     }
 
     //===============================

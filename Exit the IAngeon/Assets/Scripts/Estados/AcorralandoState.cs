@@ -4,7 +4,7 @@ public class AcorralandoState : State
 {
     public AcorralandoState() 
     {
-        transiciones["player_lost"] = typeof(BuscandoState);
+        transiciones["player_lost"] = typeof(PatrullandoState);
         transiciones["noise_heard"] = typeof(SeguirSonidoState);
     }
     public override void Execute(Enemy enemigo)
@@ -29,7 +29,7 @@ public class AcorralandoState : State
             goblin.ObtenerObjetivoAcorralamiento()
         );
 
-        // Ya ha llegado a la posición asignada.
+        // Ya ha llegado a la posiciï¿½n asignada.
         if (distancia < 0.2f)
         {
             /*velocity = Vector3.zero;
@@ -40,7 +40,7 @@ public class AcorralandoState : State
         goblin.BuscarObjetivoAcorralamiento();
         //Seek(objetivoAcorralamiento);
 
-        // Separación respecto a otros goblins que están acorralando.
+        // Separaciï¿½n respecto a otros goblins que estï¿½n acorralando.
         Collider2D[] goblinsCercanos = Physics2D.OverlapCircleAll(
             goblin.transform.position,
             goblin.separationRadius * 3f,
@@ -74,7 +74,7 @@ public class AcorralandoState : State
         goblin.EvitarObstaculos();
         goblin.ActualizarMovimiento();
 
-        //Lo q está comentado equivale a las 3 lineas de arriba, pero con funciones auxiliares para poder acceder a esas variables
+        //Lo q estï¿½ comentado equivale a las 3 lineas de arriba, pero con funciones auxiliares para poder acceder a esas variables
         /*acceleration += separacionAcorralamiento * 2f;
 
         ObstacleAvoidance();

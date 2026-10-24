@@ -68,6 +68,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goblin_2
       objectReference: {fileID: 0}
+    - target: {fileID: 6505419635905485852, guid: 6ed91f26e3912384891f488259e256a9, type: 3}
+      propertyPath: maxSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

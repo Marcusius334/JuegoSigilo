@@ -4,15 +4,17 @@ using UnityEngine.InputSystem;
 public class NormalDoor : MonoBehaviour
 {
     private Collider2D doorCollider;
-    private Renderer doorRenderer; // Para detectar el Tilemap
+    private Renderer doorRenderer; 
     private GameObject player;
     private Player playerScr;
     private bool playerNear = false;
+    
+    // Bandera para saber si el jugador ya dejó la puerta abierta permanentemente
+    private bool abiertaPorJugador = false;
 
     void Start()
     {
-        
-        doorCollider = GetComponent<Collider2D>();   //Pilla el componente
+        doorCollider = GetComponent<Collider2D>();   
         doorRenderer = GetComponent<Renderer>(); 
         player = GameObject.FindGameObjectWithTag("Player");
         playerScr = player.GetComponent<Player>();
@@ -20,17 +22,14 @@ public class NormalDoor : MonoBehaviour
 
     void Update()
     {
-        if (playerNear && Keyboard.current.eKey.wasPressedThisFrame)
+        // Si el jugador no la había abierto aún y pulsa la E
+        if (playerNear && Keyboard.current.eKey.wasPressedThisFrame && !abiertaPorJugador)
         {
             playerScr.OpenDoor();
-
+            abiertaPorJugador = true; // Registramos que el jugador la abrió
             
-            if (doorCollider != null)   //Quitamos la colision
-                doorCollider.enabled = false;
-                
-            
-            if (doorRenderer != null)   //Se desactiva la puerta
-                doorRenderer.enabled = false; 
+            if (doorCollider != null) doorCollider.enabled = false;
+            if (doorRenderer != null) doorRenderer.enabled = false; 
         }
     }
 
@@ -42,5 +41,27 @@ public class NormalDoor : MonoBehaviour
     public void PlayerFar()
     {
         playerNear = false;
+    }
+
+    // ==========================================
+    // MÉTODOS PARA IA ENEMIGA
+    // ==========================================
+    
+    public void AbrirParaEnemigo()
+    {
+        // Si el jugador ya la abrió, la IA no interfiere
+        if (abiertaPorJugador) return;
+
+        if (doorCollider != null) doorCollider.enabled = false;
+        if (doorRenderer != null) doorRenderer.enabled = false;
+    }
+
+    public void CerrarParaEnemigo()
+    {
+        // Solo se cierra tras su paso si el jugador NO la había abierto
+        if (abiertaPorJugador) return;
+
+        if (doorCollider != null) doorCollider.enabled = true;
+        if (doorRenderer != null) doorRenderer.enabled = true;
     }
 }

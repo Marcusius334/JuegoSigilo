@@ -54,6 +54,7 @@ public class Skeleton : Enemy
             Time.deltaTime * 2f
         );
 
+
         ObstacleAvoidance();
 
         velocity += acceleration;
@@ -80,7 +81,7 @@ public class Skeleton : Enemy
             }
             else
             {
-                LanzarEvento("player_lost");
+                LanzarEvento("player_lost_patrol");
             }
             velocity = Vector3.zero;
 
@@ -130,7 +131,7 @@ public class Skeleton : Enemy
             }
             else
             {
-                LanzarEvento("player_lost");
+                LanzarEvento("player_lost_patrol");
             }
 
             Debug.Log("Skeleton ha perdido al jugador");
@@ -149,7 +150,7 @@ public class Skeleton : Enemy
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
 
-            LanzarEvento("sound_reached"); //cambia a estado buscando
+            LanzarEvento("sound_reached_patrol");
             return;
         }
   
@@ -183,7 +184,7 @@ public class Skeleton : Enemy
             velocity = Vector3.zero;
             acceleration = Vector3.zero;
 
-            LanzarEvento("sound_reached");
+            LanzarEvento("sound_reached_patrol");
         }
     }
 

@@ -14,7 +14,7 @@ public class SeguirSonidoState : State
 
     public override void Enter(Enemy enemigo)
     {
-        
+
     }
 
     public override void Execute(Enemy enemigo)
