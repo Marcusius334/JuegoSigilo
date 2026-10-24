@@ -81,7 +81,7 @@ public class Skeleton : Enemy
             }
             else
             {
-                LanzarEvento("player_lost");
+                LanzarEvento("player_lost_patrol");
             }
             velocity = Vector3.zero;
 
@@ -131,7 +131,7 @@ public class Skeleton : Enemy
             }
             else
             {
-                LanzarEvento("player_lost");
+                LanzarEvento("player_lost_patrol");
             }
 
             Debug.Log("Skeleton ha perdido al jugador");
