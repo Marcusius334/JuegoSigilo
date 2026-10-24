@@ -122,7 +122,7 @@ public class Goblin : Enemy
                 }
                 else
                 {
-                    LanzarEvento("sound_reached");
+                    LanzarEvento("sound_reached_patrol");
                 }
             }
 
@@ -131,7 +131,7 @@ public class Goblin : Enemy
         {
             ReiniciarCaminoAStar();
             velocity = Vector3.zero;
-            LanzarEvento("sound_reached");
+            LanzarEvento("sound_reached_patrol");
         }
         return;
     }
