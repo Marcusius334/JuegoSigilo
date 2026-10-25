@@ -109,10 +109,10 @@ TextureImporter:
       name: trampa_arbusto_0
       rect:
         serializedVersion: 2
-        x: 4
-        y: 37
-        width: 39
-        height: 22
+        x: 50
+        y: 38
+        width: 44
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,10 +131,10 @@ TextureImporter:
       name: trampa_arbusto_1
       rect:
         serializedVersion: 2
-        x: 49
-        y: 41
-        width: 25
-        height: 15
+        x: 2
+        y: 35
+        width: 44
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -149,33 +149,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: trampa_arbusto_2
-      rect:
-        serializedVersion: 2
-        x: 75
-        y: 43
-        width: 20
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2d1d884a81ae5a620800000000000000
-      internalID: 2784889336159064530
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f166e5462ab7c504ea77ba456ebad9eb
     internalID: 0
     vertices: []
     indices: 
