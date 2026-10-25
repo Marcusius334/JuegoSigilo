@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour, IHearing
     public AudioSource audioSourceAlert;
     public AudioSource audioSourceExtra;
     public float noiseRadius = 15f;
+    public bool alert;
     
     [Header("Rotation")]
     public Transform conoVision;
@@ -117,6 +118,9 @@ public class Enemy : MonoBehaviour, IHearing
         avoidanceSide = 0;//Cosa de obstacle
 
         pathfinding = FindFirstObjectByType<AStarPathfinding>();
+
+        //cosa sonidos
+        alert = true;
     }
 
     private void Start()
@@ -539,7 +543,11 @@ public class Enemy : MonoBehaviour, IHearing
     }
 
     public void PlayAlert(){
-        audioSourceAlert.Play();
+        if (alert)
+        {
+            audioSourceAlert.PlayOneShot(audioSourceAlert.clip);
+            alert = false;
+        }
     }
 
 }

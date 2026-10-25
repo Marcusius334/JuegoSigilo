@@ -120,6 +120,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -128,11 +141,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 6
-        y: 43
-        width: 22
-        height: 35
+        y: 68
+        width: 11
+        height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -149,12 +162,12 @@ TextureImporter:
       name: trampa_Dardos_1
       rect:
         serializedVersion: 2
-        x: 37
-        y: 67
-        width: 8
-        height: 11
+        x: 22
+        y: 68
+        width: 11
+        height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -171,12 +184,12 @@ TextureImporter:
       name: trampa_Dardos_2
       rect:
         serializedVersion: 2
-        x: 53
-        y: 67
+        x: 37
+        y: 68
         width: 11
-        height: 11
+        height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -193,12 +206,12 @@ TextureImporter:
       name: trampa_Dardos_3
       rect:
         serializedVersion: 2
-        x: 22
-        y: 55
-        width: 6
-        height: 11
+        x: 53
+        y: 68
+        width: 11
+        height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -211,121 +224,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_4
-      rect:
-        serializedVersion: 2
-        x: 37
-        y: 55
-        width: 8
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 69907661b02448140800000000000000
-      internalID: 4720970924779047318
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_5
-      rect:
-        serializedVersion: 2
-        x: 53
-        y: 55
-        width: 11
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f70718af10e14a2c0800000000000000
-      internalID: -4421375940324396929
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_6
-      rect:
-        serializedVersion: 2
-        x: 22
-        y: 43
-        width: 6
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3621f66c09f4f4fc0800000000000000
-      internalID: -3508498101475274141
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_7
-      rect:
-        serializedVersion: 2
-        x: 37
-        y: 43
-        width: 8
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5cf6df26df6be3f50800000000000000
-      internalID: 6863124081562972101
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_8
-      rect:
-        serializedVersion: 2
-        x: 53
-        y: 43
-        width: 11
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cc5aa2498b69f91a0800000000000000
-      internalID: -6800551192802187828
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 270546f152818474eb29f56f51befe84
     internalID: 0
     vertices: []
     indices: 

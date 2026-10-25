@@ -120,6 +120,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -129,7 +142,7 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 65
-        width: 15
+        width: 14
         height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -151,7 +164,7 @@ TextureImporter:
         serializedVersion: 2
         x: 17
         y: 65
-        width: 15
+        width: 14
         height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -173,7 +186,7 @@ TextureImporter:
         serializedVersion: 2
         x: 33
         y: 65
-        width: 15
+        width: 14
         height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -189,143 +202,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_frente_3
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 47
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0cf3e39547d276c60800000000000000
-      internalID: 7811262056434122688
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_frente_4
-      rect:
-        serializedVersion: 2
-        x: 17
-        y: 47
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a555fc8da2e376d20800000000000000
-      internalID: 3271652008054969690
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_frente_5
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 47
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d35cb5411e156f7e0800000000000000
-      internalID: -1732106979526326979
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_frente_6
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 29
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f55e1de2a418ec550800000000000000
-      internalID: 6183021494039340383
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_frente_7
-      rect:
-        serializedVersion: 2
-        x: 17
-        y: 29
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7afedac6dc8c73df0800000000000000
-      internalID: -200470873777508441
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: trampa_Dardos_frente_8
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 29
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 39a801ed6feaefbe0800000000000000
-      internalID: -1441522455401166189
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 79eb00856bf1582408d2a92b62755e17
     internalID: 0
     vertices: []
     indices: 
