@@ -7442,7 +7442,6 @@ Transform:
   - {fileID: 215608275}
   - {fileID: 1900353625}
   - {fileID: 1221952194}
-  - {fileID: 1387885438}
   - {fileID: 771854260}
   - {fileID: 1931292023}
   - {fileID: 590933732}
@@ -107167,11 +107166,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AStarNode
   vecinos: []
---- !u!4 &1387885438 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-  m_PrefabInstance: {fileID: 2004656795}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1388211619
 GameObject:
   m_ObjectHideFlags: 0
@@ -137557,75 +137551,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8803604518281511060, guid: 7d43f20c1e3d54e48808edbafee8cab3, type: 3}
   m_PrefabInstance: {fileID: 306489298}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &2004656795
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 182482019}
-    m_Modifications:
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -50.828995
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -22.331997
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1328119364952502465, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1829830663091899393, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_SortingOrder
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3077245222209043004, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_Name
-      value: TrampaDardoDere (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202904079277878927, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_Size.x
-      value: 3.3048785
-      objectReference: {fileID: 0}
-    - target: {fileID: 8202904079277878927, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
-      propertyPath: m_Offset.x
-      value: 1.602275
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4b24bb258a8bdbc4b820a629821c2625, type: 3}
 --- !u!1 &2006414958
 GameObject:
   m_ObjectHideFlags: 0
